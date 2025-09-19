@@ -241,6 +241,26 @@ CREATE TABLE contenidos (
 );
 GO
 
+CREATE TABLE clicks_contenidos (
+   nro_restaurante VARCHAR(36) NOT NULL,
+   nro_contenido VARCHAR(36) NOT NULL,
+   nro_click VARCHAR(36) NOT NULL DEFAULT NEWID(),
+   fecha_hora_registro DATETIME NOT NULL,
+   nro_cliente VARCHAR(36) NULL,
+   costo_click DECIMAL(10,2) NULL,
+   CONSTRAINT PK_clicks_contenidos PRIMARY KEY (nro_restaurante, nro_contenido, nro_click),
+   CONSTRAINT FK_clicks_contenidos_contenidos
+        FOREIGN KEY (nro_restaurante, nro_sucursal)
+        REFERENCES contenidos (nro_restaurante, nro_contenido)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+   CONSTRAINT FK_clicks_contenidos_clientes
+        FOREIGN KEY (nro_cliente)
+        REFERENCES clientes (nro_cliente)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+   );
+
 /* =========================================
    6) Clasificaciones por sucursal
    ========================================= */
@@ -345,7 +365,7 @@ CREATE TABLE reservas_sucursales (
 GO
 
 /* =========================================
-   8) Õndices recomendados
+   8) √çndices recomendados
    ========================================= */
 
 CREATE INDEX IX_localidades_prov_nom
