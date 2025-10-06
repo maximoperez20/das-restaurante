@@ -14,6 +14,7 @@ IF OBJECT_ID('estilos_sucursales','U') IS NOT NULL DROP TABLE estilos_sucursales
 IF OBJECT_ID('especialidades_alimentarias_sucursales','U') IS NOT NULL DROP TABLE especialidades_alimentarias_sucursales;
 IF OBJECT_ID('tipos_comidas_sucursales','U') IS NOT NULL DROP TABLE tipos_comidas_sucursales;
 IF OBJECT_ID('contenidos','U') IS NOT NULL DROP TABLE contenidos;
+IF OBJECT_ID('clicks_contenidos','U') IS NOT NULL DROP TABLE clicks_contenidos;
 IF OBJECT_ID('zonas_turnos_sucursales','U') IS NOT NULL DROP TABLE zonas_turnos_sucursales;
 IF OBJECT_ID('turnos_sucursales','U') IS NOT NULL DROP TABLE turnos_sucursales;
 IF OBJECT_ID('zonas_sucursales','U') IS NOT NULL DROP TABLE zonas_sucursales;
@@ -250,7 +251,7 @@ CREATE TABLE clicks_contenidos (
    costo_click DECIMAL(10,2) NULL,
    CONSTRAINT PK_clicks_contenidos PRIMARY KEY (nro_restaurante, nro_contenido, nro_click),
    CONSTRAINT FK_clicks_contenidos_contenidos
-        FOREIGN KEY (nro_restaurante, nro_sucursal)
+        FOREIGN KEY (nro_restaurante, nro_contenido)
         REFERENCES contenidos (nro_restaurante, nro_contenido)
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
