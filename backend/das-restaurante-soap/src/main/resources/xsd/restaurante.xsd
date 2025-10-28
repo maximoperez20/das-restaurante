@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://das.ubp.edu.ar/restaurante"
+           xmlns:tns="http://das.ubp.edu.ar/restaurante"
+           elementFormDefault="qualified">
+
+    <!-- ============================================
+         RESTAURANTES - Consulta de restaurantes
+         ============================================ -->
+    
+    <xs:element name="getRestaurantesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="query" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getRestaurantesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="restaurante" type="tns:restauranteType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="restauranteType">
+        <xs:sequence>
+            <xs:element name="nroRestaurante" type="xs:string"/>
+            <xs:element name="razonSocial" type="xs:string"/>
+            <xs:element name="cuit" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ============================================
+         SUCURSALES - Consulta de sucursales
+         ============================================ -->
+    
+    <xs:element name="getSucursalesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nroRestaurante" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getSucursalesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="sucursal" type="tns:sucursalType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="sucursalType">
+        <xs:sequence>
+            <xs:element name="nroRestaurante" type="xs:string"/>
+            <xs:element name="nroSucursal" type="xs:string"/>
+            <xs:element name="nomSucursal" type="xs:string"/>
+            <xs:element name="calle" type="xs:string"/>
+            <xs:element name="nroCalle" type="xs:int"/>
+            <xs:element name="barrio" type="xs:string" minOccurs="0"/>
+            <xs:element name="codPostal" type="xs:string"/>
+            <xs:element name="telefonos" type="xs:string" minOccurs="0"/>
+            <xs:element name="totalComensales" type="xs:int"/>
+            <xs:element name="minToleranciaReserva" type="xs:int"/>
+            <xs:element name="categoriaRestaurante" type="xs:string"/>
+            <xs:element name="nomLocalidad" type="xs:string"/>
+            <xs:element name="nomProvincia" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ============================================
+         ZONAS - Consulta de zonas de una sucursal
+         ============================================ -->
+    
+    <xs:element name="getZonasRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nroRestaurante" type="xs:string"/>
+                <xs:element name="nroSucursal" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getZonasResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="zona" type="tns:zonaType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="zonaType">
+        <xs:sequence>
+            <xs:element name="nroRestaurante" type="xs:string"/>
+            <xs:element name="nroSucursal" type="xs:string"/>
+            <xs:element name="codZona" type="xs:string"/>
+            <xs:element name="nomZona" type="xs:string"/>
+            <xs:element name="cantComensales" type="xs:int"/>
+            <xs:element name="permiteMenores" type="xs:boolean"/>
+            <xs:element name="habilitada" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ============================================
+         DISPONIBILIDAD - Consulta horarios disponibles
+         ============================================ -->
+    
+    <xs:element name="getHorariosDisponiblesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nroRestaurante" type="xs:string"/>
+                <xs:element name="nroSucursal" type="xs:string"/>
+                <xs:element name="codZona" type="xs:string"/>
+                <xs:element name="fecha" type="xs:date"/>
+                <xs:element name="cantidad" type="xs:int" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getHorariosDisponiblesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="turno" type="tns:turnoDisponibleType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="turnoDisponibleType">
+        <xs:sequence>
+            <xs:element name="horaDesde" type="xs:time"/>
+            <xs:element name="horaHasta" type="xs:time"/>
+            <xs:element name="capacidadZona" type="xs:int"/>
+            <xs:element name="yaReservados" type="xs:int"/>
+            <xs:element name="disponibilidad" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ============================================
+         RESERVAS - Registro y cancelación
+         ============================================ -->
+    
+    <xs:element name="registrarReservaRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nroClienteRistorino" type="xs:string"/>
+                <xs:element name="datosCliente" type="tns:clienteType"/>
+                <xs:element name="nroRestaurante" type="xs:string"/>
+                <xs:element name="nroSucursal" type="xs:string"/>
+                <xs:element name="codZona" type="xs:string"/>
+                <xs:element name="fechaReserva" type="xs:date"/>
+                <xs:element name="horaDesde" type="xs:time"/>
+                <xs:element name="cantAdultos" type="xs:int"/>
+                <xs:element name="cantMenores" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="registrarReservaResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="codReserva" type="xs:string"/>
+                <xs:element name="confirmada" type="xs:boolean"/>
+                <xs:element name="mensaje" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="clienteType">
+        <xs:sequence>
+            <xs:element name="apellido" type="xs:string"/>
+            <xs:element name="nombre" type="xs:string"/>
+            <xs:element name="correo" type="xs:string"/>
+            <xs:element name="telefonos" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="cancelarReservaRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="codReserva" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="cancelarReservaResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="exitosa" type="xs:boolean"/>
+                <xs:element name="mensaje" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
+
