@@ -91,6 +91,26 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sources>
+                        <source>src/main/resources/xsd/restaurante.xsd</source>
+                    </sources>
+                    <packageName>ar.edu.ubp.das.soap.gen</packageName>
+                    <clearOutputDir>false</clearOutputDir>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

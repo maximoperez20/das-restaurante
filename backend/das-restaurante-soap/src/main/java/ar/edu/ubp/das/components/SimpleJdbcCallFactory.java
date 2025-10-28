@@ -24,12 +24,19 @@ public class SimpleJdbcCallFactory {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(dataSource)
             .withSchemaName(schemaName)
             .withProcedureName(procedureName)
+            .withoutProcedureColumnMetaDataAccess()
             .returningResultSet(resultSetName, BeanPropertyRowMapper.newInstance(clazz));
         
         Map<String, Object> result = jdbcCall.execute();
-        @SuppressWarnings("unchecked")
-        List<T> resultList = (List<T>) result.get(resultSetName);
-        return resultList != null ? resultList : List.of();
+        
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            if (entry.getValue() instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<T> resultList = (List<T>) entry.getValue();
+                return resultList;
+            }
+        }
+        return List.of();
     }
 
     public <T> List<T> executeQuery(String procedureName, String schemaName, SqlParameterSource params, 
@@ -40,9 +47,15 @@ public class SimpleJdbcCallFactory {
             .returningResultSet(resultSetName, BeanPropertyRowMapper.newInstance(clazz));
         
         Map<String, Object> result = jdbcCall.execute(params);
-        @SuppressWarnings("unchecked")
-        List<T> resultList = (List<T>) result.get(resultSetName);
-        return resultList != null ? resultList : List.of();
+        
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            if (entry.getValue() instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<T> resultList = (List<T>) entry.getValue();
+                return resultList;
+            }
+        }
+        return List.of();
     }
 
     public Map<String, Object> executeWithOutputs(String procedureName, String schemaName, SqlParameterSource params) {

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SOAP - das-restaurante</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test SOAP - das-restaurante</h1>
+    
+    <div class="container">
+        <h2>1. Obtener Restaurantes</h2>
+        <button onclick="getRestaurantes()">Obtener Todos</button>
+        <div id="restaurantes-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>2. Obtener Sucursales</h2>
+        <input type="text" id="nroRestaurante" placeholder="UUID del restaurante" style="width: 300px; padding: 5px;">
+        <button onclick="getSucursales()">Obtener Sucursales</button>
+        <div id="sucursales-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>3. Obtener Zonas</h2>
+        <input type="text" id="nroRestauranteZona" placeholder="UUID del restaurante" style="width: 250px; padding: 5px;">
+        <input type="text" id="nroSucursal" placeholder="UUID de la sucursal" style="width: 250px; padding: 5px;">
+        <button onclick="getZonas()">Obtener Zonas</button>
+        <div id="zonas-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>4. Horarios Disponibles</h2>
+        <input type="text" id="nroRestauranteDisp" placeholder="UUID restaurante" style="width: 200px; padding: 5px;">
+        <input type="text" id="nroSucursalDisp" placeholder="UUID sucursal" style="width: 200px; padding: 5px;">
+        <input type="text" id="codZona" placeholder="UUID zona" style="width: 200px; padding: 5px;">
+        <input type="date" id="fecha" style="padding: 5px;">
+        <input type="number" id="cantidad" placeholder="Cantidad personas" style="width: 150px; padding: 5px;">
+        <button onclick="getHorariosDisponibles()">Consultar</button>
+        <div id="disponibilidad-result"></div>
+    </div>
+
+    <script>
+        const SOAP_URL = 'http://localhost:8081/ws';
+        const NAMESPACE = 'http://das.ubp.edu.ar/restaurante';
+
+        async function callSoap(soapBody) {
+            const soapEnvelope = `
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+                                  xmlns:res="${NAMESPACE}">
+                   <soapenv:Header/>
+                   <soapenv:Body>
+                      ${soapBody}
+                   </soapenv:Body>
+                </soapenv:Envelope>
+            `;
+
+            try {
+                const response = await fetch(SOAP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/xml',
+                    },
+                    body: soapEnvelope
+                });
+
+                const text = await response.text();
+                return text;
+            } catch (error) {
+                return `<span class="error">Error: ${error.message}</span>`;
+            }
+        }
+
+        async function getRestaurantes() {
+            const soapBody = `
+                <res:getRestaurantesRequest>
+                   <res:query></res:query>
+                </res:getRestaurantesRequest>
+            `;
+            
+            const result = await callSoap(soapBody);
+            document.getElementById('restaurantes-result').innerHTML = `<pre>${escapeHtml(result)}</pre>`;
+        }
+
+        async function getSucursales() {
+            const nroRestaurante = document.getElementById('nroRestaurante').value;
+            if (!nroRestaurante) {
+                alert('Ingresa el UUID del restaurante');
+                return;
+            }
+
+            const soapBody = `
+                <res:getSucursalesRequest>
+                   <res:nroRestaurante>${nroRestaurante}</res:nroRestaurante>
+                </res:getSucursalesRequest>
+            `;
+            
+            const result = await callSoap(soapBody);
+            document.getElementById('sucursales-result').innerHTML = `<pre>${escapeHtml(result)}</pre>`;
+        }
+
+        async function getZonas() {
+            const nroRestaurante = document.getElementById('nroRestauranteZona').value;
+            const nroSucursal = document.getElementById('nroSucursal').value;
+            
+            if (!nroRestaurante || !nroSucursal) {
+                alert('Ingresa restaurante y sucursal');
+                return;
+            }
+
+            const soapBody = `
+                <res:getZonasRequest>
+                   <res:nroRestaurante>${nroRestaurante}</res:nroRestaurante>
+                   <res:nroSucursal>${nroSucursal}</res:nroSucursal>
+                </res:getZonasRequest>
+            `;
+            
+            const result = await callSoap(soapBody);
+            document.getElementById('zonas-result').innerHTML = `<pre>${escapeHtml(result)}</pre>`;
+        }
+
+        async function getHorariosDisponibles() {
+            const nroRestaurante = document.getElementById('nroRestauranteDisp').value;
+            const nroSucursal = document.getElementById('nroSucursalDisp').value;
+            const codZona = document.getElementById('codZona').value;
+            const fecha = document.getElementById('fecha').value;
+            const cantidad = document.getElementById('cantidad').value || '';
+
+            if (!nroRestaurante || !nroSucursal || !codZona || !fecha) {
+                alert('Completa todos los campos requeridos');
+                return;
+            }
+
+            const soapBody = `
+                <res:getHorariosDisponiblesRequest>
+                   <res:nroRestaurante>${nroRestaurante}</res:nroRestaurante>
+                   <res:nroSucursal>${nroSucursal}</res:nroSucursal>
+                   <res:codZona>${codZona}</res:codZona>
+                   <res:fecha>${fecha}</res:fecha>
+                   ${cantidad ? `<res:cantidad>${cantidad}</res:cantidad>` : ''}
+                </res:getHorariosDisponiblesRequest>
+            `;
+            
+            const result = await callSoap(soapBody);
+            document.getElementById('disponibilidad-result').innerHTML = `<pre>${escapeHtml(result)}</pre>`;
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>
+
