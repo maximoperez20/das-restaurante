@@ -193,5 +193,31 @@
         </xs:complexType>
     </xs:element>
 
+    <!-- ============================================
+         CONTENIDOS - Registro de contenidos publicitarios
+         ============================================ -->
+    
+    <xs:element name="registrarContenidoRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nroRestaurante" type="xs:string"/>
+                <xs:element name="nroSucursal" type="xs:string" minOccurs="0"/>
+                <xs:element name="contenidoAPublicar" type="xs:string"/>
+                <xs:element name="imagenAPublicar" type="xs:base64Binary" minOccurs="0"/>
+                <xs:element name="costoClick" type="xs:decimal" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="registrarContenidoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nroContenido" type="xs:string"/>
+                <xs:element name="exitoso" type="xs:boolean"/>
+                <xs:element name="mensaje" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>
 

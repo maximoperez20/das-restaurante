@@ -1,5 +1,5 @@
 CREATE OR ALTER PROCEDURE dbo.get_restaurantes
-  @q NVARCHAR(150) = NULL   -- búsqueda opcional (razón social o CUIT)
+  @q NVARCHAR(150) = NULL   -- bï¿½squeda opcional (razï¿½n social o CUIT)
 AS
 BEGIN
   SET NOCOUNT ON;
@@ -88,14 +88,14 @@ CREATE OR ALTER PROCEDURE dbo.get_horarios_disponibles
   @nro_sucursal    VARCHAR(36),
   @cod_zona        VARCHAR(36),
   @fecha           DATE,
-  @cantidad        INT = NULL,      -- opcional: mínimo de lugares requeridos
+  @cantidad        INT = NULL,      -- opcional: mï¿½nimo de lugares requeridos
   @incluirCero     BIT = 0          -- 1 = incluir turnos con disponibilidad 0
 AS
 BEGIN
   SET NOCOUNT ON;
 
   ;WITH base AS (
-    -- Turnos habilitados de la sucursal en los que la zona está habilitada
+    -- Turnos habilitados de la sucursal en los que la zona estï¿½ habilitada
     SELECT
       t.nro_restaurante,
       t.nro_sucursal,
@@ -115,11 +115,11 @@ BEGIN
     WHERE zts.nro_restaurante = @nro_restaurante
       AND zts.nro_sucursal    = @nro_sucursal
       AND zts.cod_zona        = @cod_zona
-      AND t.habilitado = 1          -- sólo turnos habilitados
-      AND zs.habilitada = 1         -- sólo zonas habilitadas
+      AND t.habilitado = 1          -- sï¿½lo turnos habilitados
+      AND zs.habilitada = 1         -- sï¿½lo zonas habilitadas
   ),
   res AS (
-    -- Reservas no canceladas de ese día para esa zona/turno
+    -- Reservas no canceladas de ese dï¿½a para esa zona/turno
     SELECT
       r.hora_desde,
       SUM(CAST(r.cant_adultos AS INT) + CAST(r.cant_menores AS INT)) AS reservados
@@ -144,5 +144,80 @@ BEGIN
     (@incluirCero = 1 OR (b.cant_comensales - ISNULL(res.reservados, 0)) > 0)
     AND (@cantidad IS NULL OR (b.cant_comensales - ISNULL(res.reservados, 0)) >= @cantidad)
   ORDER BY b.hora_desde;
+END
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.sp_registrar_contenido
+  @nro_restaurante      VARCHAR(36),
+  @nro_sucursal         VARCHAR(36) = NULL,
+  @contenido_a_publicar VARCHAR(500),
+  @imagen_a_publicar    VARBINARY(MAX) = NULL,
+  @costo_click          DECIMAL(10,2) = NULL
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  DECLARE @nro_contenido VARCHAR(36) = NEWID();
+  DECLARE @exitoso BIT = 0;
+  DECLARE @mensaje NVARCHAR(200) = '';
+
+  BEGIN TRY
+    DECLARE @nro_restaurante_real VARCHAR(36) = @nro_restaurante;
+
+    IF @nro_sucursal IS NOT NULL
+    BEGIN
+      DECLARE @restaurante_de_sucursal VARCHAR(36);
+      SELECT @restaurante_de_sucursal = nro_restaurante
+      FROM sucursales
+      WHERE nro_sucursal = @nro_sucursal;
+
+      IF @restaurante_de_sucursal IS NOT NULL
+      BEGIN
+        SET @nro_restaurante_real = @restaurante_de_sucursal;
+      END
+      ELSE
+      BEGIN
+        SET @mensaje = 'Sucursal no encontrada';
+        SELECT @nro_contenido AS nro_contenido, @exitoso AS exitoso, @mensaje AS mensaje;
+        RETURN;
+      END
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM restaurantes WHERE nro_restaurante = @nro_restaurante_real)
+    BEGIN
+      SET @mensaje = 'Restaurante no encontrado';
+      SELECT @nro_contenido AS nro_contenido, @exitoso AS exitoso, @mensaje AS mensaje;
+      RETURN;
+    END
+
+    INSERT INTO contenidos (
+      nro_restaurante,
+      nro_contenido,
+      contenido_a_publicar,
+      imagen_a_publicar,
+      publicado,
+      costo_click,
+      nro_sucursal
+    )
+    VALUES (
+      @nro_restaurante_real,
+      @nro_contenido,
+      @contenido_a_publicar,
+      @imagen_a_publicar,
+      1,
+      @costo_click,
+      @nro_sucursal
+    );
+
+    SET @exitoso = 1;
+    SET @mensaje = 'Contenido registrado exitosamente';
+
+  END TRY
+  BEGIN CATCH
+    SET @mensaje = ERROR_MESSAGE();
+  END CATCH
+
+  SELECT @nro_contenido AS nro_contenido, @exitoso AS exitoso, @mensaje AS mensaje;
 END
 GO
