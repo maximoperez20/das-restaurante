@@ -221,3 +221,74 @@ BEGIN
   SELECT @nro_contenido AS nro_contenido, @exitoso AS exitoso, @mensaje AS mensaje;
 END
 GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_registrar_click
+  @nro_restaurante      VARCHAR(36),
+  @nro_contenido        VARCHAR(36),
+  @nro_click            VARCHAR(36),
+  @fecha_hora_registro  DATETIME,
+  @nro_cliente          VARCHAR(36) = NULL,
+  @costo_click          DECIMAL(10,2) = NULL
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  DECLARE @exitoso BIT = 0;
+  DECLARE @mensaje NVARCHAR(200) = '';
+
+  BEGIN TRY
+    DECLARE @nro_restaurante_real VARCHAR(36);
+
+    SELECT @nro_restaurante_real = nro_restaurante
+    FROM contenidos
+    WHERE nro_contenido = @nro_contenido;
+
+    IF @nro_restaurante_real IS NULL
+    BEGIN
+      SET @mensaje = 'Contenido no encontrado';
+      SELECT @exitoso AS exitoso, @mensaje AS mensaje;
+      RETURN;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM restaurantes WHERE nro_restaurante = @nro_restaurante_real)
+    BEGIN
+      SET @mensaje = 'Restaurante no encontrado';
+      SELECT @exitoso AS exitoso, @mensaje AS mensaje;
+      RETURN;
+    END
+
+    IF EXISTS (SELECT 1 FROM clicks_contenidos WHERE nro_restaurante = @nro_restaurante_real AND nro_contenido = @nro_contenido AND nro_click = @nro_click)
+    BEGIN
+      SET @mensaje = 'Click ya registrado';
+      SELECT @exitoso AS exitoso, @mensaje AS mensaje;
+      RETURN;
+    END
+
+    INSERT INTO clicks_contenidos (
+      nro_restaurante,
+      nro_contenido,
+      nro_click,
+      fecha_hora_registro,
+      nro_cliente,
+      costo_click
+    )
+    VALUES (
+      @nro_restaurante_real,
+      @nro_contenido,
+      @nro_click,
+      @fecha_hora_registro,
+      @nro_cliente,
+      @costo_click
+    );
+
+    SET @exitoso = 1;
+    SET @mensaje = 'Click registrado exitosamente';
+
+  END TRY
+  BEGIN CATCH
+    SET @mensaje = ERROR_MESSAGE();
+  END CATCH
+
+  SELECT @exitoso AS exitoso, @mensaje AS mensaje;
+END
+GO
