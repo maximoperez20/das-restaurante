@@ -18,3 +18,5 @@ GO
 SELECT 'Base de datos actual: ' + DB_NAME() AS mensaje;
 GO
 
+
+

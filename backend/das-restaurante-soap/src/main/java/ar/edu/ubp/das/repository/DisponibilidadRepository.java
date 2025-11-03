@@ -34,4 +34,3 @@ public class DisponibilidadRepository {
         return jdbcCallFactory.executeQuery("get_horarios_disponibles", "dbo", params, "horarios", HorarioDisponibleDto.class);
     }
 }
-

@@ -22,4 +22,3 @@ public class SucursalRepository {
         return jdbcCallFactory.executeQuery("get_sucursales_x_restaurantes", "dbo", params, "sucursales", SucursalDto.class);
     }
 }
-

@@ -77,4 +77,3 @@ public class ClickDto {
         this.mensaje = mensaje;
     }
 }
-

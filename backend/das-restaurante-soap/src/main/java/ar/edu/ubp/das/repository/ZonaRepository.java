@@ -22,4 +22,3 @@ public class ZonaRepository {
         return jdbcCallFactory.executeQuery("get_zonas_x_sucursales", "dbo", params, "zonas", ZonaDto.class);
     }
 }
-

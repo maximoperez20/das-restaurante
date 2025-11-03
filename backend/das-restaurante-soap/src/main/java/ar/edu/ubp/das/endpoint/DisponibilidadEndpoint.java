@@ -68,4 +68,3 @@ public class DisponibilidadEndpoint {
         return response;
     }
 }
-

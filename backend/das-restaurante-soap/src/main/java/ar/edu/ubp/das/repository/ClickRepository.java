@@ -56,4 +56,3 @@ public class ClickRepository {
         ).stream().findFirst().orElse(null);
     }
 }
-

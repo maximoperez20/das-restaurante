@@ -29,4 +29,3 @@ public class RestauranteDto {
         this.cuit = cuit;
     }
 }
-

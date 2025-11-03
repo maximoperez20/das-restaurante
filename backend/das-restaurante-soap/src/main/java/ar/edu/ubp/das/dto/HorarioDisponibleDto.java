@@ -49,4 +49,3 @@ public class HorarioDisponibleDto {
         this.disponibilidad = disponibilidad;
     }
 }
-

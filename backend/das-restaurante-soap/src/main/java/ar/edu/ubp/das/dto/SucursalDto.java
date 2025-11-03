@@ -119,4 +119,3 @@ public class SucursalDto {
         this.nomProvincia = nomProvincia;
     }
 }
-
