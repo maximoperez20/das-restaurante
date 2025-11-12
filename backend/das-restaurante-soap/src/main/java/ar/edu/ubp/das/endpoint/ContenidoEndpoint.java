@@ -35,9 +35,6 @@ public class ContenidoEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "registrarContenidoRequest")
     @ResponsePayload
     public RegistrarContenidoResponse registrarContenido(@RequestPayload RegistrarContenidoRequest request) {
-        logger.info("SOAP - Registrar contenido (JSON)");
-        logger.info("  JSON recibido: [{}]", request.getJsonData());
-
         try {
             // Parsear JSON recibido con GSON
             Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -47,13 +44,6 @@ public class ContenidoEndpoint {
             String nroSucursal = jsonData.containsKey("nroSucursal") && jsonData.get("nroSucursal") != null 
                 ? (String) jsonData.get("nroSucursal") : null;
             String contenidoAPublicar = (String) jsonData.get("contenidoAPublicar");
-            
-            logger.info("  nroRestaurante: [{}]", nroRestaurante);
-            logger.info("  nroSucursal: [{}]", nroSucursal);
-            logger.info("  contenidoAPublicar (primeros 50 chars): [{}]", 
-                contenidoAPublicar != null && contenidoAPublicar.length() > 50 
-                    ? contenidoAPublicar.substring(0, 50) + "..." 
-                    : contenidoAPublicar);
 
             // Procesar imagen (puede venir como base64 string o null)
             byte[] imagenBytes = null;
@@ -87,9 +77,6 @@ public class ContenidoEndpoint {
                     costoClick
             );
 
-            logger.info("Resultado SP - exitoso: {}, mensaje: {}, nroContenido: {}", 
-                resultado.isExitoso(), resultado.getMensaje(), resultado.getNroContenido());
-
             // Construir respuesta JSON
             Map<String, Object> jsonResponse = new HashMap<>();
             jsonResponse.put("nroContenido", resultado.getNroContenido() != null ? resultado.getNroContenido() : "");
@@ -97,12 +84,10 @@ public class ContenidoEndpoint {
             jsonResponse.put("mensaje", resultado.getMensaje() != null ? resultado.getMensaje() : "");
             
             String jsonResponseStr = gson.toJson(jsonResponse);
-            logger.info("JSON respuesta: {}", jsonResponseStr);
 
             RegistrarContenidoResponse response = new RegistrarContenidoResponse();
             response.setJsonResponse(jsonResponseStr);
 
-            logger.info("Contenido registrado exitosamente. ID: {}", resultado.getNroContenido());
             return response;
 
         } catch (Exception e) {

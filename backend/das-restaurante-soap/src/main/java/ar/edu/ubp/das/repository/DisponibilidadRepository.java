@@ -19,14 +19,14 @@ public class DisponibilidadRepository {
     public List<HorarioDisponibleDto> getHorariosDisponibles(
             String nroRestaurante, 
             String nroSucursal, 
-            String codZona, 
+            String codZona,  // Puede ser null para devolver todas las zonas
             LocalDate fecha, 
             Integer cantidad) {
         
         SqlParameterSource params = new MapSqlParameterSource()
             .addValue("nro_restaurante", nroRestaurante)
             .addValue("nro_sucursal", nroSucursal)
-            .addValue("cod_zona", codZona)
+            .addValue("cod_zona", codZona)  // NULL si queremos todas las zonas
             .addValue("fecha", java.sql.Date.valueOf(fecha))
             .addValue("cantidad", cantidad)
             .addValue("incluirCero", false);

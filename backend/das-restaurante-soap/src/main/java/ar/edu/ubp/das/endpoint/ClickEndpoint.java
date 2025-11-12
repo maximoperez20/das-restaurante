@@ -37,9 +37,6 @@ public class ClickEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "notificarClickRequest")
     @ResponsePayload
     public NotificarClickResponse notificarClick(@RequestPayload NotificarClickRequest request) {
-        logger.info("SOAP - Notificar click (JSON)");
-        logger.info("  JSON recibido: [{}]", request.getJsonData());
-
         try {
             // Parsear JSON recibido con GSON
             Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -49,10 +46,6 @@ public class ClickEndpoint {
             String nroContenido = (String) jsonData.get("nroContenido");
             String nroClick = (String) jsonData.get("nroClick");
             String fechaHoraRegistroStr = (String) jsonData.get("fechaHoraRegistro");
-            
-            logger.info("  nroRestaurante: [{}]", nroRestaurante);
-            logger.info("  nroContenido: [{}]", nroContenido);
-            logger.info("  nroClick: [{}]", nroClick);
 
             // Parsear fecha
             LocalDateTime fechaHoraRegistro;
@@ -92,16 +85,12 @@ public class ClickEndpoint {
                     costoClick
             );
 
-            logger.info("Resultado SP - exitoso: {}, mensaje: {}", 
-                resultado.isExitoso(), resultado.getMensaje());
-
             // Construir respuesta JSON
             Map<String, Object> jsonResponse = new HashMap<>();
             jsonResponse.put("exitoso", resultado.isExitoso());
             jsonResponse.put("mensaje", resultado.getMensaje() != null ? resultado.getMensaje() : "");
             
             String jsonResponseStr = gson.toJson(jsonResponse);
-            logger.info("JSON respuesta: {}", jsonResponseStr);
 
             NotificarClickResponse response = new NotificarClickResponse();
             response.setJsonResponse(jsonResponseStr);

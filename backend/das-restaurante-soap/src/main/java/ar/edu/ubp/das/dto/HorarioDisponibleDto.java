@@ -3,9 +3,12 @@ package ar.edu.ubp.das.dto;
 import java.sql.Time;
 
 public class HorarioDisponibleDto {
+    private String codZona;
+    private String nomZona;
     private Time horaDesde;
     private Time horaHasta;
     private Integer capacidadZona;
+    private Boolean permiteMenores;
     private Integer yaReservados;
     private Integer disponibilidad;
 
@@ -47,5 +50,29 @@ public class HorarioDisponibleDto {
 
     public void setDisponibilidad(Integer disponibilidad) {
         this.disponibilidad = disponibilidad;
+    }
+
+    public String getCodZona() {
+        return codZona;
+    }
+
+    public void setCodZona(String codZona) {
+        this.codZona = codZona;
+    }
+
+    public String getNomZona() {
+        return nomZona;
+    }
+
+    public void setNomZona(String nomZona) {
+        this.nomZona = nomZona;
+    }
+
+    public Boolean getPermiteMenores() {
+        return permiteMenores;
+    }
+
+    public void setPermiteMenores(Boolean permiteMenores) {
+        this.permiteMenores = permiteMenores;
     }
 }

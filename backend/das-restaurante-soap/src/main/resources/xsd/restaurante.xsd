@@ -110,11 +110,7 @@
     <xs:element name="getHorariosDisponiblesRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="nroRestaurante" type="xs:string"/>
-                <xs:element name="nroSucursal" type="xs:string"/>
-                <xs:element name="codZona" type="xs:string"/>
-                <xs:element name="fecha" type="xs:date"/>
-                <xs:element name="cantidad" type="xs:int" minOccurs="0"/>
+                <xs:element name="jsonData" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -122,20 +118,10 @@
     <xs:element name="getHorariosDisponiblesResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="turno" type="tns:turnoDisponibleType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="jsonResponse" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:complexType name="turnoDisponibleType">
-        <xs:sequence>
-            <xs:element name="horaDesde" type="xs:time"/>
-            <xs:element name="horaHasta" type="xs:time"/>
-            <xs:element name="capacidadZona" type="xs:int"/>
-            <xs:element name="yaReservados" type="xs:int"/>
-            <xs:element name="disponibilidad" type="xs:int"/>
-        </xs:sequence>
-    </xs:complexType>
 
     <!-- ============================================
          RESERVAS - Registro y cancelación

@@ -1,7 +1,5 @@
 package ar.edu.ubp.das.dto;
 
-import java.math.BigDecimal;
-
 public class ContenidoDto {
     private String nroContenido;
     private boolean exitoso;
