@@ -86,7 +86,7 @@ GO
 CREATE OR ALTER PROCEDURE dbo.get_horarios_disponibles
   @nro_restaurante VARCHAR(36),
   @nro_sucursal    VARCHAR(36),
-  @cod_zona        VARCHAR(36),
+  @cod_zona        VARCHAR(36) = NULL,  -- opcional: si es NULL devuelve todas las zonas
   @fecha           DATE,
   @cantidad        INT = NULL,      -- opcional: m�nimo de lugares requeridos
   @incluirCero     BIT = 0          -- 1 = incluir turnos con disponibilidad 0
@@ -100,9 +100,11 @@ BEGIN
       t.nro_restaurante,
       t.nro_sucursal,
       zts.cod_zona,
+      z.nom_zona,                    -- Nombre de la zona
       t.hora_desde,
       t.hora_hasta,
-      zs.cant_comensales
+      zs.cant_comensales,
+      zs.permite_menores             -- Permite menores
     FROM zonas_turnos_sucursales zts
     JOIN turnos_sucursales t
       ON t.nro_restaurante = zts.nro_restaurante
@@ -112,38 +114,45 @@ BEGIN
       ON zs.nro_restaurante = zts.nro_restaurante
      AND zs.nro_sucursal    = zts.nro_sucursal
      AND zs.cod_zona        = zts.cod_zona
+    JOIN zonas z
+      ON z.cod_zona = zs.cod_zona
     WHERE zts.nro_restaurante = @nro_restaurante
       AND zts.nro_sucursal    = @nro_sucursal
-      AND zts.cod_zona        = @cod_zona
+      AND (@cod_zona IS NULL OR zts.cod_zona = @cod_zona)  -- Si cod_zona es NULL, todas las zonas
       AND t.habilitado = 1          -- s�lo turnos habilitados
       AND zs.habilitada = 1         -- s�lo zonas habilitadas
   ),
   res AS (
     -- Reservas no canceladas de ese d�a para esa zona/turno
     SELECT
+      r.cod_zona,
       r.hora_desde,
       SUM(CAST(r.cant_adultos AS INT) + CAST(r.cant_menores AS INT)) AS reservados
     FROM reservas_sucursales r
     WHERE r.nro_restaurante = @nro_restaurante
       AND r.nro_sucursal    = @nro_sucursal
-      AND r.cod_zona        = @cod_zona
+      AND (@cod_zona IS NULL OR r.cod_zona = @cod_zona)  -- Si cod_zona es NULL, todas las zonas
       AND r.fecha_reserva   = @fecha
       AND r.cancelada       = 0
-    GROUP BY r.hora_desde
+    GROUP BY r.cod_zona, r.hora_desde
   )
   SELECT
+      b.cod_zona,
+      b.nom_zona,
       b.hora_desde,
       b.hora_hasta,
       b.cant_comensales               AS capacidad_zona,
+      b.permite_menores,
       ISNULL(res.reservados, 0)       AS ya_reservados,
       b.cant_comensales - ISNULL(res.reservados, 0) AS disponibilidad
   FROM base b
   LEFT JOIN res
-    ON res.hora_desde = b.hora_desde
+    ON res.cod_zona = b.cod_zona
+   AND res.hora_desde = b.hora_desde
   WHERE
     (@incluirCero = 1 OR (b.cant_comensales - ISNULL(res.reservados, 0)) > 0)
     AND (@cantidad IS NULL OR (b.cant_comensales - ISNULL(res.reservados, 0)) >= @cantidad)
-  ORDER BY b.hora_desde;
+  ORDER BY b.nom_zona, b.hora_desde;
 END
 GO
 
