@@ -199,6 +199,39 @@
         </xs:complexType>
     </xs:element>
 
+    <!-- Listar y marcar contenidos (IA integration) -->
+    <xs:element name="listarContenidosRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonData" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="listarContenidosResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonResponse" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="marcarPublicadoRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonData" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="marcarPublicadoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonResponse" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <!-- ============================================
          CLICKS - Notificación de clicks en contenidos
          ============================================ -->

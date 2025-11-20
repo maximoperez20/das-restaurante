@@ -4,6 +4,10 @@ import ar.edu.ubp.das.dto.ContenidoDto;
 import ar.edu.ubp.das.repository.ContenidoRepository;
 import ar.edu.ubp.das.soap.gen.RegistrarContenidoRequest;
 import ar.edu.ubp.das.soap.gen.RegistrarContenidoResponse;
+import ar.edu.ubp.das.soap.gen.ListarContenidosRequest;
+import ar.edu.ubp.das.soap.gen.ListarContenidosResponse;
+import ar.edu.ubp.das.soap.gen.MarcarPublicadoRequest;
+import ar.edu.ubp.das.soap.gen.MarcarPublicadoResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -109,6 +113,67 @@ public class ContenidoEndpoint {
                 response.setJsonResponse("{\"exitoso\":false,\"mensaje\":\"Error crítico al procesar respuesta\"}");
                 return response;
             }
+        }
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "listarContenidosRequest")
+    @ResponsePayload
+    public ListarContenidosResponse listarContenidos(@RequestPayload ListarContenidosRequest request) {
+        try {
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
+
+            String nroRestaurante = (String) jsonData.get("nroRestaurante");
+            String nroSucursal = jsonData.containsKey("nroSucursal") && jsonData.get("nroSucursal") != null
+                ? (String) jsonData.get("nroSucursal") : null;
+
+            java.util.List<java.util.Map<String, Object>> contenidos = contenidoRepository.listarContenidos(nroRestaurante, nroSucursal);
+
+            String jsonResponseStr = gson.toJson(contenidos);
+
+            ListarContenidosResponse response = new ListarContenidosResponse();
+            response.setJsonResponse(jsonResponseStr);
+            return response;
+        } catch (Exception e) {
+            logger.error("Error al listar contenidos: {}", e.getMessage(), e);
+            ListarContenidosResponse response = new ListarContenidosResponse();
+            response.setJsonResponse("[]");
+            return response;
+        }
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "marcarPublicadoRequest")
+    @ResponsePayload
+    public MarcarPublicadoResponse marcarPublicado(@RequestPayload MarcarPublicadoRequest request) {
+        try {
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
+
+            String nroRestaurante = (String) jsonData.get("nroRestaurante");
+            @SuppressWarnings("unchecked")
+            java.util.List<String> contenidos = (java.util.List<String>) jsonData.get("nroContenidos");
+
+            int updated = 0;
+            if (contenidos != null) {
+                for (String nro : contenidos) {
+                    updated += contenidoRepository.marcarPublicado(nroRestaurante, nro);
+                }
+            }
+
+            Map<String, Object> jsonResponse = new HashMap<>();
+            jsonResponse.put("exitoso", true);
+            jsonResponse.put("actualizados", updated);
+            MarcarPublicadoResponse response = new MarcarPublicadoResponse();
+            response.setJsonResponse(gson.toJson(jsonResponse));
+            return response;
+        } catch (Exception e) {
+            logger.error("Error al marcar publicados: {}", e.getMessage(), e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("exitoso", false);
+            error.put("mensaje", e.getMessage());
+            MarcarPublicadoResponse response = new MarcarPublicadoResponse();
+            response.setJsonResponse(gson.toJson(error));
+            return response;
         }
     }
 }
