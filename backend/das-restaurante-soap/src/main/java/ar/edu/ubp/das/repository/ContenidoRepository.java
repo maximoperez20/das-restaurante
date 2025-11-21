@@ -50,5 +50,28 @@ public class ContenidoRepository {
                 }
         ).stream().findFirst().orElse(null);
     }
+
+    public java.util.Map<String, Object> listarContenidos(String nroRestaurante, String nroSucursal) {
+        String sql = "EXEC sp_ListarContenidos ?, ?";
+
+        java.util.List<java.util.Map<String, Object>> resultados = jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+                    java.util.Map<String, Object> contenido = new java.util.HashMap<>();
+                    contenido.put("nroContenido", rs.getString("nro_contenido"));
+                    contenido.put("contenidoAPublicar", rs.getString("contenido_a_publicar"));
+                    contenido.put("costoClick", rs.getBigDecimal("costo_click"));
+                    contenido.put("nroSucursal", rs.getString("nro_sucursal"));
+                    contenido.put("publicado", rs.getBoolean("publicado"));
+                    // Las imágenes se manejan con URL, así que retornamos null
+                    contenido.put("imagenAPublicar", null);
+                    return contenido;
+                },
+                nroRestaurante,
+                nroSucursal
+        );
+
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
 }
 

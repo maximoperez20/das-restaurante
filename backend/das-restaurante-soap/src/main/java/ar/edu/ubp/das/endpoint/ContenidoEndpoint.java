@@ -2,6 +2,8 @@ package ar.edu.ubp.das.endpoint;
 
 import ar.edu.ubp.das.dto.ContenidoDto;
 import ar.edu.ubp.das.repository.ContenidoRepository;
+import ar.edu.ubp.das.soap.gen.ListarContenidosRequest;
+import ar.edu.ubp.das.soap.gen.ListarContenidosResponse;
 import ar.edu.ubp.das.soap.gen.RegistrarContenidoRequest;
 import ar.edu.ubp.das.soap.gen.RegistrarContenidoResponse;
 import com.google.gson.Gson;
@@ -107,6 +109,55 @@ public class ContenidoEndpoint {
                 logger.error("Error al construir respuesta de error", ex);
                 RegistrarContenidoResponse response = new RegistrarContenidoResponse();
                 response.setJsonResponse("{\"exitoso\":false,\"mensaje\":\"Error crítico al procesar respuesta\"}");
+                return response;
+            }
+        }
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "listarContenidosRequest")
+    @ResponsePayload
+    public ListarContenidosResponse listarContenidos(@RequestPayload ListarContenidosRequest request) {
+        try {
+            // Parsear JSON recibido con GSON
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
+            
+            String nroRestaurante = (String) jsonData.get("nroRestaurante");
+            String nroSucursal = jsonData.containsKey("nroSucursal") && jsonData.get("nroSucursal") != null 
+                ? (String) jsonData.get("nroSucursal") : null;
+
+            // Llamar al repository
+            java.util.Map<String, Object> contenido = contenidoRepository.listarContenidos(nroRestaurante, nroSucursal);
+
+            // Construir respuesta JSON
+            String jsonResponseStr;
+            if (contenido != null) {
+                jsonResponseStr = gson.toJson(contenido);
+            } else {
+                // Si no hay contenido, retornar objeto vacío
+                jsonResponseStr = "{}";
+            }
+
+            ListarContenidosResponse response = new ListarContenidosResponse();
+            response.setJsonResponse(jsonResponseStr);
+
+            return response;
+
+        } catch (Exception e) {
+            logger.error("Error al listar contenidos: {}", e.getMessage(), e);
+            
+            try {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Error al listar contenidos: " + e.getMessage());
+                String errorJson = gson.toJson(errorResponse);
+                
+                ListarContenidosResponse response = new ListarContenidosResponse();
+                response.setJsonResponse(errorJson);
+                return response;
+            } catch (Exception ex) {
+                logger.error("Error al construir respuesta de error", ex);
+                ListarContenidosResponse response = new ListarContenidosResponse();
+                response.setJsonResponse("{\"error\":\"Error crítico al procesar respuesta\"}");
                 return response;
             }
         }

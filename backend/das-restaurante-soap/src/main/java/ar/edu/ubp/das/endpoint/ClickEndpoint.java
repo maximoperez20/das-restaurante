@@ -42,7 +42,6 @@ public class ClickEndpoint {
     @ResponsePayload
     public NotificarClickResponse notificarClick(@RequestPayload NotificarClickRequest request) {
         try {
-            // Parsear JSON recibido con GSON
             Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
             Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
             
@@ -51,7 +50,6 @@ public class ClickEndpoint {
             String nroClick = (String) jsonData.get("nroClick");
             String fechaHoraRegistroStr = (String) jsonData.get("fechaHoraRegistro");
 
-            // Parsear fecha
             LocalDateTime fechaHoraRegistro;
             if (fechaHoraRegistroStr != null && !fechaHoraRegistroStr.trim().isEmpty()) {
                 fechaHoraRegistro = LocalDateTime.parse(fechaHoraRegistroStr, DATE_TIME_FORMATTER);
@@ -59,7 +57,6 @@ public class ClickEndpoint {
                 fechaHoraRegistro = LocalDateTime.now();
             }
 
-            // Procesar nroCliente (opcional)
             String nroCliente = null;
             if (jsonData.containsKey("nroCliente") && jsonData.get("nroCliente") != null) {
                 Object nroClienteObj = jsonData.get("nroCliente");
@@ -68,7 +65,6 @@ public class ClickEndpoint {
                 }
             }
 
-            // Procesar costoClick (opcional)
             BigDecimal costoClick = null;
             if (jsonData.containsKey("costoClick") && jsonData.get("costoClick") != null) {
                 Object costoObj = jsonData.get("costoClick");
@@ -79,7 +75,6 @@ public class ClickEndpoint {
                 }
             }
 
-            // Llamar al stored procedure
             ClickDto resultado = clickRepository.registrarClick(
                     nroRestaurante,
                     nroContenido,
@@ -89,7 +84,6 @@ public class ClickEndpoint {
                     costoClick
             );
 
-            // Construir respuesta JSON
             Map<String, Object> jsonResponse = new HashMap<>();
             jsonResponse.put("exitoso", resultado.isExitoso());
             jsonResponse.put("mensaje", resultado.getMensaje() != null ? resultado.getMensaje() : "");
