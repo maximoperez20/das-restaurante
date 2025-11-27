@@ -1,13 +1,13 @@
 /* =========================================================================================
    MODELO: RESTAURANTE - SQL Server (T-SQL) con CREATE OR ALTER
-   Base de Datos: das_restaurante_soap
+   Base de Datos: das_restaurante
    ========================================================================================= */
 
 SET ANSI_NULLS ON;
 SET QUOTED_IDENTIFIER ON;
 GO
 
-USE das_restaurante_soap;
+USE das_restaurante;
 GO
 
 /* =========================================
@@ -391,6 +391,6 @@ CREATE INDEX IX_reservas_busqueda
     INCLUDE (cod_reserva, cant_adultos, cant_menores, cancelada);
 GO
 
-PRINT 'Tablas creadas/verificadas exitosamente en das_restaurante_soap';
+PRINT 'Tablas creadas/verificadas exitosamente en das_restaurante';
 GO
 

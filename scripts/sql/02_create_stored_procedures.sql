@@ -1,8 +1,8 @@
 /* =========================================================================================
-   STORED PROCEDURES - das_restaurante_soap
+   STORED PROCEDURES - das_restaurante
    ========================================================================================= */
 
-USE das_restaurante_soap;
+USE das_restaurante;
 GO
 
 -- Este archivo contiene los stored procedures con CREATE OR ALTER
@@ -373,6 +373,6 @@ BEGIN
 END
 GO
 
-PRINT 'Stored procedures creados/actualizados exitosamente en das_restaurante_soap';
+PRINT 'Stored procedures creados/actualizados exitosamente en das_restaurante';
 GO
 

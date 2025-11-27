@@ -10,7 +10,7 @@ Servicio SOAP que expone funcionalidades de restaurantes, sucursales, zonas, tur
 
 - **Framework**: Spring Boot 3.5.7
 - **Java**: 17
-- **Base de Datos**: SQL Server (`das_restaurante_soap`)
+- **Base de Datos**: SQL Server (`das_restaurante`)
 - **Puerto**: 8081
 - **Protocolo**: SOAP/XML
 - **Build Tool**: Maven
@@ -47,12 +47,12 @@ Asegúrate de tener SQL Server instalado y corriendo en `localhost:1433`.
 # Conectar a SQL Server y crear la base de datos
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U sa -P DB_Password \
-   -Q "CREATE DATABASE das_restaurante_soap;"
+   -Q "CREATE DATABASE das_restaurante;"
 ```
 
 O si usas SQL Server local:
 ```sql
-CREATE DATABASE das_restaurante_soap;
+CREATE DATABASE das_restaurante;
 GO
 ```
 
@@ -64,17 +64,17 @@ GO
 # 1. Crear tablas
 docker cp scripts/sql/01_create_tables.sql SQL_Server_Docker:/tmp/
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U sa -P DB_Password -d das_restaurante_soap -i /tmp/01_create_tables.sql
+   -S localhost -U sa -P DB_Password -d das_restaurante -i /tmp/01_create_tables.sql
 
 # 2. Crear stored procedures
 docker cp scripts/sql/02_create_stored_procedures.sql SQL_Server_Docker:/tmp/
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U sa -P DB_Password -d das_restaurante_soap -i /tmp/02_create_stored_procedures.sql
+   -S localhost -U sa -P DB_Password -d das_restaurante -i /tmp/02_create_stored_procedures.sql
 
 # 3. Insertar datos básicos
 docker cp scripts/sql/03_insert_datos_basicos.sql SQL_Server_Docker:/tmp/
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U sa -P DB_Password -d das_restaurante_soap -i /tmp/03_insert_datos_basicos.sql
+   -S localhost -U sa -P DB_Password -d das_restaurante -i /tmp/03_insert_datos_basicos.sql
 ```
 
 **O usando SQL Server Management Studio (SSMS):**
@@ -89,7 +89,7 @@ Verifica que la base de datos tenga datos:
 
 ```bash
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U sa -P DB_Password -d das_restaurante_soap \
+   -S localhost -U sa -P DB_Password -d das_restaurante \
    -Q "SELECT COUNT(*) AS total_restaurantes FROM restaurantes;"
 ```
 
@@ -102,7 +102,7 @@ Verifica que `backend/das-restaurante-soap/src/main/resources/application.proper
 ```properties
 spring.application.name=das-restaurante-soap
 
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante_soap;encrypt=false
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante;encrypt=false
 spring.datasource.username=sa
 spring.datasource.password=DB_Password
 spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -170,7 +170,7 @@ scripts/sql/
 spring.application.name=das-restaurante-soap
 
 # SQL Server
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante_soap;encrypt=false
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante;encrypt=false
 spring.datasource.username=sa
 spring.datasource.password=DB_Password
 spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -198,7 +198,7 @@ docker ps | grep SQL_Server_Docker
 # Verificar que la base de datos exista
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U sa -P DB_Password \
-   -Q "SELECT name FROM sys.databases WHERE name='das_restaurante_soap';"
+   -Q "SELECT name FROM sys.databases WHERE name='das_restaurante';"
 ```
 
 ### Error de Puerto en Uso
@@ -215,7 +215,7 @@ server.port=8082
 ### Error al Ejecutar Scripts SQL
 
 - Verifica que ejecutaste los scripts en orden: `01_create_tables.sql` → `02_create_stored_procedures.sql` → `03_insert_datos_basicos.sql`
-- Verifica que la base de datos `das_restaurante_soap` existe
+- Verifica que la base de datos `das_restaurante` existe
 - Revisa los logs de SQL Server para errores específicos
 
 ### El WSDL No Se Genera

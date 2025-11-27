@@ -10,7 +10,7 @@ Servicio REST que expone funcionalidades de restaurantes, sucursales, zonas, tur
 
 - **Framework**: Spring Boot 3.5.7
 - **Java**: 17
-- **Base de Datos**: SQL Server (`das_restaurante_soap`)
+- **Base de Datos**: SQL Server (`das_restaurante`)
 - **Puerto**: 8082
 - **Protocolo**: REST/JSON
 - **Build Tool**: Maven
@@ -26,7 +26,7 @@ Servicio REST que expone funcionalidades de restaurantes, sucursales, zonas, tur
 
 ### 1. Configurar Base de Datos
 
-**IMPORTANTE**: Este servicio REST usa la misma base de datos que el servicio SOAP (`das_restaurante_soap`).
+**IMPORTANTE**: Este servicio REST usa la misma base de datos que el servicio SOAP (`das_restaurante`).
 
 #### Opción A: SQL Server en Docker
 
@@ -49,12 +49,12 @@ Asegúrate de tener SQL Server instalado y corriendo en `localhost:1433`.
 # Conectar a SQL Server y crear la base de datos
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
    -S localhost -U sa -P DB_Password \
-   -Q "CREATE DATABASE das_restaurante_soap;"
+   -Q "CREATE DATABASE das_restaurante;"
 ```
 
 O si usas SQL Server local:
 ```sql
-CREATE DATABASE das_restaurante_soap;
+CREATE DATABASE das_restaurante;
 GO
 ```
 
@@ -66,17 +66,17 @@ GO
 # 1. Crear tablas
 docker cp ../scripts/sql/01_create_tables.sql SQL_Server_Docker:/tmp/
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U sa -P DB_Password -d das_restaurante_soap -i /tmp/01_create_tables.sql
+   -S localhost -U sa -P DB_Password -d das_restaurante -i /tmp/01_create_tables.sql
 
 # 2. Crear stored procedures
 docker cp ../scripts/sql/02_create_stored_procedures.sql SQL_Server_Docker:/tmp/
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U sa -P DB_Password -d das_restaurante_soap -i /tmp/02_create_stored_procedures.sql
+   -S localhost -U sa -P DB_Password -d das_restaurante -i /tmp/02_create_stored_procedures.sql
 
 # 3. Insertar datos básicos
 docker cp ../scripts/sql/03_insert_datos_basicos.sql SQL_Server_Docker:/tmp/
 docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U sa -P DB_Password -d das_restaurante_soap -i /tmp/03_insert_datos_basicos.sql
+   -S localhost -U sa -P DB_Password -d das_restaurante -i /tmp/03_insert_datos_basicos.sql
 ```
 
 ### 4. Configurar application.properties
@@ -84,7 +84,7 @@ docker exec -it SQL_Server_Docker /opt/mssql-tools/bin/sqlcmd \
 Edita `src/main/resources/application.properties` si es necesario:
 
 ```properties
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante_soap;encrypt=false
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante;encrypt=false
 spring.datasource.username=sa
 spring.datasource.password=DB_Password
 server.port=8082
@@ -179,7 +179,7 @@ java -jar target/das-restaurante-rest-0.0.1-SNAPSHOT.war
 spring.application.name=das-restaurante-rest
 
 # SQL Server
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante_soap;encrypt=false
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=das_restaurante;encrypt=false
 spring.datasource.username=sa
 spring.datasource.password=DB_Password
 spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -226,7 +226,7 @@ curl "http://localhost:8082/api/restaurantes/{nroRestaurante}/sucursales/{nroSuc
 
 ### Base de Datos Compartida
 
-Este servicio REST usa la **misma base de datos** que el servicio SOAP (`das_restaurante_soap`). Ambos servicios pueden coexistir y usar los mismos datos.
+Este servicio REST usa la **misma base de datos** que el servicio SOAP (`das_restaurante`). Ambos servicios pueden coexistir y usar los mismos datos.
 
 ### Equivalencia con SOAP
 

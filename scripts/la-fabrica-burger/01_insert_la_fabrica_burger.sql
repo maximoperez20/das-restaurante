@@ -1,6 +1,6 @@
 /* =========================================================================================
    INSERT DE DATOS: La Fábrica Burger (REST)
-   Base de Datos: das_restaurante_soap
+   Base de Datos: das_restaurante
    UUID del Restaurante: FABRICA-BURGER-3333-3333-3333-333333333333
    Protocolo: REST
    ========================================================================================= */
@@ -8,7 +8,7 @@
 SET NOCOUNT ON;
 GO
 
-USE das_restaurante_soap;
+USE das_restaurante;
 GO
 
 /* =========================================
@@ -26,12 +26,20 @@ SELECT @cod_cba = cod_provincia FROM provincias WHERE nom_provincia = 'Córdoba'
 IF NOT EXISTS (SELECT 1 FROM localidades WHERE nom_localidad='Cerro de las Rosas' AND cod_provincia=@cod_cba)
     INSERT INTO localidades (nom_localidad, cod_provincia) VALUES ('Cerro de las Rosas', @cod_cba);
 
--- Zonas
-IF NOT EXISTS (SELECT 1 FROM zonas WHERE nom_zona='Salón Principal')
-    INSERT INTO zonas (nom_zona) VALUES ('Salón Principal');
+-- Zonas (con UUIDs fijos para correlación con das_ristorino)
+-- Reutilizar UUIDs de zonas compartidas si ya existen
+DECLARE @cod_zona_salon_principal VARCHAR(36) = 'ZONA-SALON-PRINCIPAL-0001-0001-0001-0001';
+DECLARE @cod_zona_patio VARCHAR(36) = 'ZONA-PATIO-0001-0001-0001-0001';
 
-IF NOT EXISTS (SELECT 1 FROM zonas WHERE nom_zona='Patio')
-    INSERT INTO zonas (nom_zona) VALUES ('Patio');
+IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_salon_principal)
+    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_salon_principal, 'Salón Principal');
+ELSE
+    UPDATE zonas SET nom_zona = 'Salón Principal' WHERE cod_zona = @cod_zona_salon_principal;
+
+IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_patio)
+    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_patio, 'Patio');
+ELSE
+    UPDATE zonas SET nom_zona = 'Patio' WHERE cod_zona = @cod_zona_patio;
 
 -- Categorías de precios
 IF NOT EXISTS (SELECT 1 FROM categorias_precios WHERE nom_categoria='Media')
@@ -77,10 +85,10 @@ SELECT @nro_localidad_cerro = nro_localidad FROM localidades WHERE nom_localidad
 DECLARE @nro_categoria_media VARCHAR(36);
 SELECT @nro_categoria_media = nro_categoria FROM categorias_precios WHERE nom_categoria='Media';
 
-DECLARE @suc_1_uuid VARCHAR(36);
+-- UUID fijo para Sucursal 1: Cerro de las Rosas
+DECLARE @suc_1_uuid VARCHAR(36) = 'FABRICA-BURGER-SUC-0001-0001-0001-0001';
 IF NOT EXISTS (SELECT 1 FROM sucursales WHERE nro_restaurante = @rest_uuid AND nom_sucursal = 'La Fábrica Burger - Cerro de las Rosas')
 BEGIN
-    SET @suc_1_uuid = NEWID();
     INSERT INTO sucursales (
         nro_restaurante, nro_sucursal, nom_sucursal, calle, nro_calle, barrio,
         nro_localidad, cod_postal, telefonos, total_comensales, min_tolerencia_reserva, nro_categoria
@@ -94,8 +102,8 @@ BEGIN
 END
 ELSE
 BEGIN
-    SELECT @suc_1_uuid = nro_sucursal FROM sucursales 
-    WHERE nro_restaurante = @rest_uuid AND nom_sucursal = 'La Fábrica Burger - Cerro de las Rosas';
+    UPDATE sucursales SET nro_sucursal = @suc_1_uuid
+    WHERE nro_restaurante = @rest_uuid AND nom_sucursal = 'La Fábrica Burger - Cerro de las Rosas' AND nro_sucursal != @suc_1_uuid;
     PRINT 'Sucursal 1 (Cerro de las Rosas) ya existe: ' + @suc_1_uuid;
 END
 
@@ -103,15 +111,12 @@ END
    4) Zonas de Sucursal 1: Cerro de las Rosas
    ========================================= */
 
-DECLARE @cod_zona_salon VARCHAR(36), @cod_zona_patio VARCHAR(36);
-SELECT @cod_zona_salon = cod_zona FROM zonas WHERE nom_zona='Salón Principal';
-SELECT @cod_zona_patio = cod_zona FROM zonas WHERE nom_zona='Patio';
-
+-- Usar los UUIDs fijos definidos arriba
 -- Salón Principal: 60 comensales
-IF NOT EXISTS (SELECT 1 FROM zonas_sucursales WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND cod_zona = @cod_zona_salon)
+IF NOT EXISTS (SELECT 1 FROM zonas_sucursales WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND cod_zona = @cod_zona_salon_principal)
 BEGIN
     INSERT INTO zonas_sucursales (nro_restaurante, nro_sucursal, cod_zona, cant_comensales, permite_menores, habilitada)
-    VALUES (@rest_uuid, @suc_1_uuid, @cod_zona_salon, 60, 1, 1);
+    VALUES (@rest_uuid, @suc_1_uuid, @cod_zona_salon_principal, 60, 1, 1);
     PRINT 'Zona Salón Principal insertada para Sucursal 1';
 END
 
@@ -141,9 +146,9 @@ BEGIN
         VALUES (@rest_uuid, @suc_1_uuid, @hora, @hora_hasta, 1);
         
         -- Zonas por turno
-        IF NOT EXISTS (SELECT 1 FROM zonas_turnos_sucursales WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND cod_zona = @cod_zona_salon AND hora_desde = @hora)
+        IF NOT EXISTS (SELECT 1 FROM zonas_turnos_sucursales WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND cod_zona = @cod_zona_salon_principal AND hora_desde = @hora)
             INSERT INTO zonas_turnos_sucursales (nro_restaurante, nro_sucursal, cod_zona, hora_desde, permite_menores)
-            VALUES (@rest_uuid, @suc_1_uuid, @cod_zona_salon, @hora, 1);
+            VALUES (@rest_uuid, @suc_1_uuid, @cod_zona_salon_principal, @hora, 1);
             
         IF NOT EXISTS (SELECT 1 FROM zonas_turnos_sucursales WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND cod_zona = @cod_zona_patio AND hora_desde = @hora)
             INSERT INTO zonas_turnos_sucursales (nro_restaurante, nro_sucursal, cod_zona, hora_desde, permite_menores)
