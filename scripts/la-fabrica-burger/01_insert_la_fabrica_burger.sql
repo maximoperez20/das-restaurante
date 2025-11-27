@@ -49,8 +49,8 @@ IF NOT EXISTS (SELECT 1 FROM categorias_precios WHERE nom_categoria='Media')
 IF NOT EXISTS (SELECT 1 FROM tipos_comidas WHERE nom_tipo_comida='Americana')
     INSERT INTO tipos_comidas (nom_tipo_comida) VALUES ('Americana');
 
-IF NOT EXISTS (SELECT 1 FROM tipos_comidas WHERE nom_tipo_comida='Fast Food')
-    INSERT INTO tipos_comidas (nom_tipo_comida) VALUES ('Fast Food');
+IF NOT EXISTS (SELECT 1 FROM tipos_comidas WHERE nom_tipo_comida='Fast food gourmet')
+    INSERT INTO tipos_comidas (nom_tipo_comida) VALUES ('Fast food gourmet');
 
 -- Estilos
 IF NOT EXISTS (SELECT 1 FROM estilos WHERE nom_estilo='Casual')
@@ -167,7 +167,7 @@ PRINT 'Turnos y zonas por turno insertados para Sucursal 1';
 
 DECLARE @nro_tipo_americana VARCHAR(36), @nro_tipo_fastfood VARCHAR(36);
 SELECT @nro_tipo_americana = nro_tipo_comida FROM tipos_comidas WHERE nom_tipo_comida='Americana';
-SELECT @nro_tipo_fastfood = nro_tipo_comida FROM tipos_comidas WHERE nom_tipo_comida='Fast Food';
+SELECT @nro_tipo_fastfood = nro_tipo_comida FROM tipos_comidas WHERE nom_tipo_comida='Fast food gourmet';
 
 IF NOT EXISTS (SELECT 1 FROM tipos_comidas_sucursales WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND nro_tipo_comida = @nro_tipo_americana)
     INSERT INTO tipos_comidas_sucursales (nro_restaurante, nro_sucursal, nro_tipo_comida, habilitado)

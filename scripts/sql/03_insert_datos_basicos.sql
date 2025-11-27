@@ -1,5 +1,5 @@
 /* =========================================================================================
-   INSERT DE DATOS BÁSICOS - das_restaurante_soap
+   INSERT DE DATOS BÁSICOS - das_restaurante
    Incluye SOLO catálogos base: provincias, localidades, zonas, categorías, tipos de comida, estilos
    NOTA: Los restaurantes se insertan con los scripts individuales
    ========================================================================================= */
@@ -7,7 +7,7 @@
 SET NOCOUNT ON;
 GO
 
-USE das_restaurante_soap;
+USE das_restaurante;
 GO
 
 /* =========================================
@@ -89,11 +89,10 @@ IF NOT EXISTS (SELECT 1 FROM estilos WHERE nom_estilo='Gourmet')
 IF NOT EXISTS (SELECT 1 FROM estilos WHERE nom_estilo='Bar / Tragos')
     INSERT INTO estilos (nom_estilo) VALUES ('Bar / Tragos');
 
-PRINT 'Catálogos base insertados exitosamente en das_restaurante_soap';
+PRINT 'Catálogos base insertados exitosamente en das_restaurante';
 PRINT 'Los restaurantes se insertan con los scripts individuales:';
 PRINT '  - la-bella-pizza/01_insert_la_bella_pizza.sql';
 PRINT '  - perukai/01_insert_perukai.sql';
 PRINT '  - la-fabrica-burger/01_insert_la_fabrica_burger.sql';
 PRINT '  - sabores-del-norte/01_insert_sabores_del_norte.sql';
 GO
-

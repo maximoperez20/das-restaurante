@@ -55,8 +55,8 @@ IF NOT EXISTS (SELECT 1 FROM categorias_precios WHERE nom_categoria='Económica'
     INSERT INTO categorias_precios (nom_categoria) VALUES ('Económica');
 
 -- Tipos de comidas
-IF NOT EXISTS (SELECT 1 FROM tipos_comidas WHERE nom_tipo_comida='Regional')
-    INSERT INTO tipos_comidas (nom_tipo_comida) VALUES ('Regional');
+IF NOT EXISTS (SELECT 1 FROM tipos_comidas WHERE nom_tipo_comida='Regional del NOA')
+    INSERT INTO tipos_comidas (nom_tipo_comida) VALUES ('Regional del NOA');
 
 -- Estilos
 IF NOT EXISTS (SELECT 1 FROM estilos WHERE nom_estilo='Familiar')
@@ -176,7 +176,7 @@ PRINT 'Turnos y zonas por turno insertados para Sucursal 1';
    ========================================= */
 
 DECLARE @nro_tipo_regional VARCHAR(36);
-SELECT @nro_tipo_regional = nro_tipo_comida FROM tipos_comidas WHERE nom_tipo_comida='Regional';
+SELECT @nro_tipo_regional = nro_tipo_comida FROM tipos_comidas WHERE nom_tipo_comida='Regional del NOA';
 
 IF NOT EXISTS (SELECT 1 FROM tipos_comidas_sucursales WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND nro_tipo_comida = @nro_tipo_regional)
     INSERT INTO tipos_comidas_sucursales (nro_restaurante, nro_sucursal, nro_tipo_comida, habilitado)
