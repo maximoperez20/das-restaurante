@@ -2,10 +2,8 @@ package ar.edu.ubp.das.controller;
 
 import ar.edu.ubp.das.dto.HorarioDisponibleDto;
 import ar.edu.ubp.das.repository.DisponibilidadRepository;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +20,11 @@ public class DisponibilidadController {
 
     private static final Logger logger = LoggerFactory.getLogger(DisponibilidadController.class);
 
-    @Autowired
-    private DisponibilidadRepository disponibilidadRepository;
-
-    private final Gson gson = new Gson();
+    private final DisponibilidadRepository disponibilidadRepository;
+    
+    public DisponibilidadController(DisponibilidadRepository disponibilidadRepository) {
+        this.disponibilidadRepository = disponibilidadRepository;
+    }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getHorariosDisponibles(

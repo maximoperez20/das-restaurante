@@ -2,10 +2,8 @@ package ar.edu.ubp.das.controller;
 
 import ar.edu.ubp.das.dto.ContenidoDto;
 import ar.edu.ubp.das.repository.ContenidoRepository;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +18,11 @@ public class ContenidoController {
 
     private static final Logger logger = LoggerFactory.getLogger(ContenidoController.class);
 
-    @Autowired
-    private ContenidoRepository contenidoRepository;
-
-    private final Gson gson = new Gson();
+    private final ContenidoRepository contenidoRepository;
+    
+    public ContenidoController(ContenidoRepository contenidoRepository) {
+        this.contenidoRepository = contenidoRepository;
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> registrarContenido(

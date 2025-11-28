@@ -4,7 +4,6 @@ import ar.edu.ubp.das.dto.ClickDto;
 import ar.edu.ubp.das.repository.ClickRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +22,11 @@ public class ClicksBatchController {
     private static final Logger logger = LoggerFactory.getLogger(ClicksBatchController.class);
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    @Autowired
-    private ClickRepository clickRepository;
+    private final ClickRepository clickRepository;
+    
+    public ClicksBatchController(ClickRepository clickRepository) {
+        this.clickRepository = clickRepository;
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> notificarClicksBatch(

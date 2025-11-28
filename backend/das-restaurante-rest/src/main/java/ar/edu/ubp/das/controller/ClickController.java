@@ -4,16 +4,13 @@ import ar.edu.ubp.das.dto.ClickDto;
 import ar.edu.ubp.das.repository.ClickRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,8 +20,11 @@ public class ClickController {
     private static final Logger logger = LoggerFactory.getLogger(ClickController.class);
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    @Autowired
-    private ClickRepository clickRepository;
+    private final ClickRepository clickRepository;
+    
+    public ClickController(ClickRepository clickRepository) {
+        this.clickRepository = clickRepository;
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> notificarClick(

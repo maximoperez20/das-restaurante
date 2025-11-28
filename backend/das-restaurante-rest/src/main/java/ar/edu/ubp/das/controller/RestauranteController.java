@@ -6,7 +6,6 @@ import ar.edu.ubp.das.dto.ZonaDto;
 import ar.edu.ubp.das.repository.RestauranteRepository;
 import ar.edu.ubp.das.repository.SucursalRepository;
 import ar.edu.ubp.das.repository.ZonaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +15,17 @@ import java.util.List;
 @RequestMapping("/api/restaurantes")
 public class RestauranteController {
 
-    @Autowired
-    private RestauranteRepository restauranteRepository;
-
-    @Autowired
-    private SucursalRepository sucursalRepository;
-
-    @Autowired
-    private ZonaRepository zonaRepository;
+    private final RestauranteRepository restauranteRepository;
+    private final SucursalRepository sucursalRepository;
+    private final ZonaRepository zonaRepository;
+    
+    public RestauranteController(RestauranteRepository restauranteRepository,
+                                SucursalRepository sucursalRepository,
+                                ZonaRepository zonaRepository) {
+        this.restauranteRepository = restauranteRepository;
+        this.sucursalRepository = sucursalRepository;
+        this.zonaRepository = zonaRepository;
+    }
 
     @GetMapping
     public ResponseEntity<List<RestauranteDto>> getRestaurantes(@RequestParam(required = false) String query) {
