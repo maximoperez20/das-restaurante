@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.controller;
+package ar.edu.ubp.das.rest;
 
 import ar.edu.ubp.das.repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.controller;
+package ar.edu.ubp.das.rest;
 
 import ar.edu.ubp.das.dto.RestauranteDto;
 import ar.edu.ubp.das.dto.SucursalDto;

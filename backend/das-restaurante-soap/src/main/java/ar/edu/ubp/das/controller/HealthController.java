@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.controller;
+package ar.edu.ubp.das.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
