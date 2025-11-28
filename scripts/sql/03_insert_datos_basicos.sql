@@ -36,16 +36,38 @@ IF NOT EXISTS (SELECT 1 FROM localidades WHERE nom_localidad='Centro' AND cod_pr
     INSERT INTO localidades (nom_localidad, cod_provincia) VALUES ('Centro', @cod_cba);
 
 -- Zonas (para los 4 restaurantes del examen final)
-IF NOT EXISTS (SELECT 1 FROM zonas WHERE nom_zona='Salón Principal')
-    INSERT INTO zonas (nom_zona) VALUES ('Salón Principal');
-IF NOT EXISTS (SELECT 1 FROM zonas WHERE nom_zona='Terraza')
-    INSERT INTO zonas (nom_zona) VALUES ('Terraza');
-IF NOT EXISTS (SELECT 1 FROM zonas WHERE nom_zona='Patio')
-    INSERT INTO zonas (nom_zona) VALUES ('Patio');
-IF NOT EXISTS (SELECT 1 FROM zonas WHERE nom_zona='Patio Cubierto')
-    INSERT INTO zonas (nom_zona) VALUES ('Patio Cubierto');
-IF NOT EXISTS (SELECT 1 FROM zonas WHERE nom_zona='Barra')
-    INSERT INTO zonas (nom_zona) VALUES ('Barra');
+-- IMPORTANTE: Usar UUIDs fijos para correlación con das_ristorino
+-- Estos UUIDs DEBEN coincidir exactamente con los usados en los scripts individuales de restaurantes
+DECLARE @cod_zona_salon_principal VARCHAR(36) = 'ZONA-SALON-PRINCIPAL-0001-0001-0001-0001';
+DECLARE @cod_zona_terraza VARCHAR(36) = 'ZONA-TERRAZA-0001-0001-0001-0001';
+DECLARE @cod_zona_patio VARCHAR(36) = 'ZONA-PATIO-0001-0001-0001-0001';
+DECLARE @cod_zona_patio_cubierto VARCHAR(36) = 'ZONA-PATIO-CUBIERTO-0001-0001-0001-0001';
+DECLARE @cod_zona_barra VARCHAR(36) = 'ZONA-BARRA-0001-0001-0001-0001';
+
+IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_salon_principal)
+    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_salon_principal, 'Salón Principal');
+ELSE
+    UPDATE zonas SET nom_zona = 'Salón Principal' WHERE cod_zona = @cod_zona_salon_principal;
+
+IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_terraza)
+    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_terraza, 'Terraza');
+ELSE
+    UPDATE zonas SET nom_zona = 'Terraza' WHERE cod_zona = @cod_zona_terraza;
+
+IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_patio)
+    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_patio, 'Patio');
+ELSE
+    UPDATE zonas SET nom_zona = 'Patio' WHERE cod_zona = @cod_zona_patio;
+
+IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_patio_cubierto)
+    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_patio_cubierto, 'Patio Cubierto');
+ELSE
+    UPDATE zonas SET nom_zona = 'Patio Cubierto' WHERE cod_zona = @cod_zona_patio_cubierto;
+
+IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_barra)
+    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_barra, 'Barra');
+ELSE
+    UPDATE zonas SET nom_zona = 'Barra' WHERE cod_zona = @cod_zona_barra;
 
 -- Categorías de precios
 IF NOT EXISTS (SELECT 1 FROM categorias_precios WHERE nom_categoria='Económica')

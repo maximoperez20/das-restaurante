@@ -29,26 +29,30 @@ IF NOT EXISTS (SELECT 1 FROM localidades WHERE nom_localidad='Nueva Córdoba' AN
 IF NOT EXISTS (SELECT 1 FROM localidades WHERE nom_localidad='Güemes' AND cod_provincia=@cod_cba)
     INSERT INTO localidades (nom_localidad, cod_provincia) VALUES ('Güemes', @cod_cba);
 
--- Zonas (con UUIDs fijos para correlación con das_ristorino)
--- Reutilizar UUIDs de zonas compartidas si ya existen, o crear con UUIDs fijos
+-- Zonas (UUIDs fijos - ya insertadas por 03_insert_datos_basicos.sql)
+-- Solo obtener los UUIDs, no insertar (las zonas ya están en el catálogo)
 DECLARE @cod_zona_salon_principal VARCHAR(36) = 'ZONA-SALON-PRINCIPAL-0001-0001-0001-0001';
 DECLARE @cod_zona_barra VARCHAR(36) = 'ZONA-BARRA-0001-0001-0001-0001';
 DECLARE @cod_zona_terraza VARCHAR(36) = 'ZONA-TERRAZA-0001-0001-0001-0001';
 
+-- Verificar que las zonas existan (deben estar insertadas por 03_insert_datos_basicos.sql)
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_salon_principal)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_salon_principal, 'Salón Principal');
-ELSE
-    UPDATE zonas SET nom_zona = 'Salón Principal' WHERE cod_zona = @cod_zona_salon_principal;
+BEGIN
+    RAISERROR('Error: La zona "Salón Principal" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_barra)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_barra, 'Barra');
-ELSE
-    UPDATE zonas SET nom_zona = 'Barra' WHERE cod_zona = @cod_zona_barra;
+BEGIN
+    RAISERROR('Error: La zona "Barra" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_terraza)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_terraza, 'Terraza');
-ELSE
-    UPDATE zonas SET nom_zona = 'Terraza' WHERE cod_zona = @cod_zona_terraza;
+BEGIN
+    RAISERROR('Error: La zona "Terraza" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 -- Categorías de precios
 IF NOT EXISTS (SELECT 1 FROM categorias_precios WHERE nom_categoria='Premium')

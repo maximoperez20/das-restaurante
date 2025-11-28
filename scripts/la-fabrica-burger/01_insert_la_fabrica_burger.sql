@@ -26,20 +26,23 @@ SELECT @cod_cba = cod_provincia FROM provincias WHERE nom_provincia = 'Córdoba'
 IF NOT EXISTS (SELECT 1 FROM localidades WHERE nom_localidad='Cerro de las Rosas' AND cod_provincia=@cod_cba)
     INSERT INTO localidades (nom_localidad, cod_provincia) VALUES ('Cerro de las Rosas', @cod_cba);
 
--- Zonas (con UUIDs fijos para correlación con das_ristorino)
--- Reutilizar UUIDs de zonas compartidas si ya existen
+-- Zonas (UUIDs fijos - ya insertadas por 03_insert_datos_basicos.sql)
+-- Solo obtener los UUIDs, no insertar (las zonas ya están en el catálogo)
 DECLARE @cod_zona_salon_principal VARCHAR(36) = 'ZONA-SALON-PRINCIPAL-0001-0001-0001-0001';
 DECLARE @cod_zona_patio VARCHAR(36) = 'ZONA-PATIO-0001-0001-0001-0001';
 
+-- Verificar que las zonas existan (deben estar insertadas por 03_insert_datos_basicos.sql)
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_salon_principal)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_salon_principal, 'Salón Principal');
-ELSE
-    UPDATE zonas SET nom_zona = 'Salón Principal' WHERE cod_zona = @cod_zona_salon_principal;
+BEGIN
+    RAISERROR('Error: La zona "Salón Principal" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_patio)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_patio, 'Patio');
-ELSE
-    UPDATE zonas SET nom_zona = 'Patio' WHERE cod_zona = @cod_zona_patio;
+BEGIN
+    RAISERROR('Error: La zona "Patio" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 -- Categorías de precios
 IF NOT EXISTS (SELECT 1 FROM categorias_precios WHERE nom_categoria='Media')

@@ -29,26 +29,31 @@ IF NOT EXISTS (SELECT 1 FROM localidades WHERE nom_localidad='Centro' AND cod_pr
 IF NOT EXISTS (SELECT 1 FROM localidades WHERE nom_localidad='Cerro de las Rosas' AND cod_provincia=@cod_cba)
     INSERT INTO localidades (nom_localidad, cod_provincia) VALUES ('Cerro de las Rosas', @cod_cba);
 
--- Zonas (con UUIDs fijos para correlación con das_ristorino)
+-- Zonas (UUIDs fijos - ya insertadas por 03_insert_datos_basicos.sql)
+-- Solo obtener los UUIDs, no insertar (las zonas ya están en el catálogo)
 -- NOTA: Estos UUIDs DEBEN coincidir exactamente con los usados en das_ristorino/scripts/sql/12_insert_restaurantes_examen_final.sql
 DECLARE @cod_zona_salon_principal VARCHAR(36) = 'ZONA-SALON-PRINCIPAL-0001-0001-0001-0001';
 DECLARE @cod_zona_patio_cubierto VARCHAR(36) = 'ZONA-PATIO-CUBIERTO-0001-0001-0001-0001';
 DECLARE @cod_zona_terraza VARCHAR(36) = 'ZONA-TERRAZA-0001-0001-0001-0001';
 
+-- Verificar que las zonas existan (deben estar insertadas por 03_insert_datos_basicos.sql)
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_salon_principal)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_salon_principal, 'Salón Principal');
-ELSE
-    UPDATE zonas SET nom_zona = 'Salón Principal' WHERE cod_zona = @cod_zona_salon_principal;
+BEGIN
+    RAISERROR('Error: La zona "Salón Principal" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_patio_cubierto)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_patio_cubierto, 'Patio Cubierto');
-ELSE
-    UPDATE zonas SET nom_zona = 'Patio Cubierto' WHERE cod_zona = @cod_zona_patio_cubierto;
+BEGIN
+    RAISERROR('Error: La zona "Patio Cubierto" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 IF NOT EXISTS (SELECT 1 FROM zonas WHERE cod_zona = @cod_zona_terraza)
-    INSERT INTO zonas (cod_zona, nom_zona) VALUES (@cod_zona_terraza, 'Terraza');
-ELSE
-    UPDATE zonas SET nom_zona = 'Terraza' WHERE cod_zona = @cod_zona_terraza;
+BEGIN
+    RAISERROR('Error: La zona "Terraza" no existe. Ejecutar primero 03_insert_datos_basicos.sql', 16, 1);
+    RETURN;
+END
 
 -- Categorías de precios
 IF NOT EXISTS (SELECT 1 FROM categorias_precios WHERE nom_categoria='Económica')
