@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.rest;
+package ar.edu.ubp.das.controller;
 
 import ar.edu.ubp.das.dto.ClickDto;
 import ar.edu.ubp.das.repository.ClickRepository;
