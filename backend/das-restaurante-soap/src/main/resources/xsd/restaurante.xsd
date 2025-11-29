@@ -11,7 +11,7 @@
     <xs:element name="getRestaurantesRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="query" type="xs:string" minOccurs="0"/>
+                <xs:element name="jsonData" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -19,7 +19,7 @@
     <xs:element name="getRestaurantesResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="restaurante" type="tns:restauranteType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="jsonResponse" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -39,7 +39,7 @@
     <xs:element name="getSucursalesRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="nroRestaurante" type="xs:string"/>
+                <xs:element name="jsonData" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -47,7 +47,7 @@
     <xs:element name="getSucursalesResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="sucursal" type="tns:sucursalType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="jsonResponse" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -77,8 +77,7 @@
     <xs:element name="getZonasRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="nroRestaurante" type="xs:string"/>
-                <xs:element name="nroSucursal" type="xs:string"/>
+                <xs:element name="jsonData" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -86,7 +85,7 @@
     <xs:element name="getZonasResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="zona" type="tns:zonaType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="jsonResponse" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -130,15 +129,7 @@
     <xs:element name="registrarReservaRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="nroClienteRistorino" type="xs:string"/>
-                <xs:element name="datosCliente" type="tns:clienteType"/>
-                <xs:element name="nroRestaurante" type="xs:string"/>
-                <xs:element name="nroSucursal" type="xs:string"/>
-                <xs:element name="codZona" type="xs:string"/>
-                <xs:element name="fechaReserva" type="xs:date"/>
-                <xs:element name="horaDesde" type="xs:time"/>
-                <xs:element name="cantAdultos" type="xs:int"/>
-                <xs:element name="cantMenores" type="xs:int"/>
+                <xs:element name="jsonData" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -146,26 +137,15 @@
     <xs:element name="registrarReservaResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="codReserva" type="xs:string"/>
-                <xs:element name="confirmada" type="xs:boolean"/>
-                <xs:element name="mensaje" type="xs:string"/>
+                <xs:element name="jsonResponse" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="clienteType">
-        <xs:sequence>
-            <xs:element name="apellido" type="xs:string"/>
-            <xs:element name="nombre" type="xs:string"/>
-            <xs:element name="correo" type="xs:string"/>
-            <xs:element name="telefonos" type="xs:string" minOccurs="0"/>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:element name="cancelarReservaRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="codReserva" type="xs:string"/>
+                <xs:element name="jsonData" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -173,8 +153,7 @@
     <xs:element name="cancelarReservaResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="exitosa" type="xs:boolean"/>
-                <xs:element name="mensaje" type="xs:string"/>
+                <xs:element name="jsonResponse" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

@@ -2,16 +2,21 @@ package ar.edu.ubp.das.endpoint;
 
 import ar.edu.ubp.das.repository.ReservaRepository;
 import ar.edu.ubp.das.soap.gen.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+import java.lang.reflect.Type;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Endpoint
 public class ReservaEndpoint {
@@ -21,45 +26,65 @@ public class ReservaEndpoint {
     @Autowired
     private ReservaRepository reservaRepository;
 
+    private final Gson gson = new Gson();
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_TIME;
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "registrarReservaRequest")
     @ResponsePayload
     public RegistrarReservaResponse registrarReserva(@RequestPayload RegistrarReservaRequest request) {
         RegistrarReservaResponse response = new RegistrarReservaResponse();
         
         try {
-            ClienteType cliente = request.getDatosCliente();
+            // Parsear JSON recibido
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
+            
+            // Extraer datos del cliente
+            @SuppressWarnings("unchecked")
+            Map<String, Object> datosCliente = (Map<String, Object>) jsonData.get("datosCliente");
             String nroCliente = reservaRepository.buscarOCrearCliente(
-                cliente.getApellido(),
-                cliente.getNombre(),
-                cliente.getCorreo(),
-                cliente.getTelefonos()
+                (String) datosCliente.get("apellido"),
+                (String) datosCliente.get("nombre"),
+                (String) datosCliente.get("correo"),
+                datosCliente.containsKey("telefonos") && datosCliente.get("telefonos") != null 
+                    ? (String) datosCliente.get("telefonos") : null
             );
             
-            XMLGregorianCalendar xmlDate = request.getFechaReserva();
-            LocalDate fechaReserva = LocalDate.of(xmlDate.getYear(), xmlDate.getMonth(), xmlDate.getDay());
+            // Parsear fecha y hora
+            String fechaStr = (String) jsonData.get("fechaReserva");
+            LocalDate fechaReserva = LocalDate.parse(fechaStr, DATE_FORMATTER);
             
-            XMLGregorianCalendar xmlTime = request.getHoraDesde();
-            LocalTime horaLocal = LocalTime.of(xmlTime.getHour(), xmlTime.getMinute(), xmlTime.getSecond());
+            String horaStr = (String) jsonData.get("horaDesde");
+            LocalTime horaLocal = LocalTime.parse(horaStr, TIME_FORMATTER);
             Time horaDesde = Time.valueOf(horaLocal);
             
             String codReserva = reservaRepository.registrarReserva(
                 nroCliente,
-                request.getNroRestaurante(),
-                request.getNroSucursal(),
-                request.getCodZona(),
+                (String) jsonData.get("nroRestaurante"),
+                (String) jsonData.get("nroSucursal"),
+                (String) jsonData.get("codZona"),
                 fechaReserva,
                 horaDesde,
-                request.getCantAdultos(),
-                request.getCantMenores()
+                ((Number) jsonData.get("cantAdultos")).intValue(),
+                jsonData.containsKey("cantMenores") && jsonData.get("cantMenores") != null
+                    ? ((Number) jsonData.get("cantMenores")).intValue() : 0
             );
             
-            response.setCodReserva(codReserva);
-            response.setConfirmada(true);
-            response.setMensaje("Reserva registrada exitosamente");
+            // Construir respuesta JSON
+            Map<String, Object> jsonResponse = new HashMap<>();
+            jsonResponse.put("codReserva", codReserva);
+            jsonResponse.put("confirmada", true);
+            jsonResponse.put("mensaje", "Reserva registrada exitosamente");
+            
+            response.setJsonResponse(gson.toJson(jsonResponse));
             
         } catch (Exception e) {
-            response.setConfirmada(false);
-            response.setMensaje("Error al registrar reserva: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("codReserva", "");
+            errorResponse.put("confirmada", false);
+            errorResponse.put("mensaje", "Error al registrar reserva: " + e.getMessage());
+            response.setJsonResponse(gson.toJson(errorResponse));
         }
         
         return response;
@@ -71,12 +96,24 @@ public class ReservaEndpoint {
         CancelarReservaResponse response = new CancelarReservaResponse();
         
         try {
-            boolean cancelada = reservaRepository.cancelarReserva(request.getCodReserva());
-            response.setExitosa(cancelada);
-            response.setMensaje(cancelada ? "Reserva cancelada exitosamente" : "Reserva no encontrada");
+            // Parsear JSON recibido
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
+            
+            String codReserva = (String) jsonData.get("codReserva");
+            boolean cancelada = reservaRepository.cancelarReserva(codReserva);
+            
+            // Construir respuesta JSON
+            Map<String, Object> jsonResponse = new HashMap<>();
+            jsonResponse.put("exitosa", cancelada);
+            jsonResponse.put("mensaje", cancelada ? "Reserva cancelada exitosamente" : "Reserva no encontrada");
+            
+            response.setJsonResponse(gson.toJson(jsonResponse));
         } catch (Exception e) {
-            response.setExitosa(false);
-            response.setMensaje("Error al cancelar reserva: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("exitosa", false);
+            errorResponse.put("mensaje", "Error al cancelar reserva: " + e.getMessage());
+            response.setJsonResponse(gson.toJson(errorResponse));
         }
         
         return response;
