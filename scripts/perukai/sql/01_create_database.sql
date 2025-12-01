@@ -1,0 +1,1 @@
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'das_perukai') BEGIN CREATE DATABASE das_perukai; PRINT 'Base de datos das_perukai creada exitosamente'; END ELSE BEGIN PRINT 'Base de datos das_perukai ya existe'; END GO
