@@ -1,11 +1,13 @@
 package ar.edu.ubp.das.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -14,6 +16,11 @@ public class ReservaRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * Registra una reserva usando el stored procedure sp_registrar_reserva.
+     * El SP valida disponibilidad, capacidad, zona habilitada y turno válido.
+     * Lanza excepción si no hay disponibilidad o alguna validación falla.
+     */
     public String registrarReserva(
             String nroCliente,
             String nroRestaurante,
@@ -24,26 +31,26 @@ public class ReservaRepository {
             int cantAdultos,
             int cantMenores) {
         
-        String codReserva = UUID.randomUUID().toString();
+        String sql = "EXEC dbo.sp_registrar_reserva ?, ?, ?, ?, ?, ?, ?, ?";
         
-        String sql = "INSERT INTO reservas_sucursales (" +
-                     "cod_reserva, nro_cliente, fecha_reserva, nro_restaurante, nro_sucursal, " +
-                     "cod_zona, hora_desde, cant_adultos, cant_menores, cancelada, fecha_hora_registro) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, GETDATE())";
-        
-        jdbcTemplate.update(sql, 
-            codReserva, 
-            nroCliente, 
-            java.sql.Date.valueOf(fechaReserva), 
-            nroRestaurante, 
-            nroSucursal, 
-            codZona, 
-            horaDesde, 
-            cantAdultos, 
-            cantMenores
-        );
-        
-        return codReserva;
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(sql, 
+                nroCliente, 
+                nroRestaurante, 
+                nroSucursal, 
+                codZona, 
+                java.sql.Date.valueOf(fechaReserva), 
+                horaDesde, 
+                cantAdultos, 
+                cantMenores
+            );
+            
+            return (String) result.get("cod_reserva");
+            
+        } catch (DataAccessException e) {
+            // El SP lanzará un error si no hay disponibilidad o alguna validación falla
+            throw new RuntimeException("Error al registrar reserva: " + e.getMessage(), e);
+        }
     }
 
     public boolean cancelarReserva(String codReserva) {
