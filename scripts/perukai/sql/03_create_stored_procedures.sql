@@ -499,3 +499,17 @@ GO
 PRINT 'Stored procedures creados/actualizados exitosamente en das_perukai';
 GO
 
+
+CREATE OR ALTER PROCEDURE dbo.sp_cancelar_reserva
+  @nro_reserva VARCHAR(36)
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  UPDATE reservas_sucursales
+  SET cancelada = 1, fecha_hora_cancelacion = GETDATE()
+  WHERE cod_reserva = @nro_reserva;
+
+  SELECT @@ROWCOUNT;
+END
+GO

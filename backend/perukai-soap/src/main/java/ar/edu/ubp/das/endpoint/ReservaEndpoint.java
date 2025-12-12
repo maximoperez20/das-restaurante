@@ -4,6 +4,8 @@ import ar.edu.ubp.das.repository.ReservaRepository;
 import ar.edu.ubp.das.soap.gen.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -21,6 +23,7 @@ import java.util.Map;
 @Endpoint
 public class ReservaEndpoint {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReservaEndpoint.class);
     private static final String NAMESPACE_URI = "http://das.ubp.edu.ar/restaurante";
 
     @Autowired
@@ -100,6 +103,7 @@ public class ReservaEndpoint {
             Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
             Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
             
+            logger.info("JSON recibido: {}", jsonData);
             String codReserva = (String) jsonData.get("codReserva");
             boolean cancelada = reservaRepository.cancelarReserva(codReserva);
             
