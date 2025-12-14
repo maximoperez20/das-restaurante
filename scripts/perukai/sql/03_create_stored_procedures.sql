@@ -513,3 +513,26 @@ BEGIN
   SELECT @@ROWCOUNT;
 END
 GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_modificar_reserva
+  @nro_reserva VARCHAR(36),
+  @cod_zona VARCHAR(36),
+  @fecha_reserva DATE,
+  @hora_desde TIME,
+  @cant_adultos INT,
+  @cant_menores INT
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  UPDATE reservas_sucursales
+  SET cod_zona = @cod_zona,
+      fecha_reserva = @fecha_reserva,
+      hora_desde = @hora_desde,
+      cant_adultos = @cant_adultos,
+      cant_menores = @cant_menores
+  WHERE cod_reserva = @nro_reserva;
+  
+  SELECT @@ROWCOUNT;
+END
+GO

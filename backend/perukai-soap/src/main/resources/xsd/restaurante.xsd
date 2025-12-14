@@ -158,6 +158,21 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="modificarReservaRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonData" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+        <xs:element name="modificarReservaResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonResponse" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
     <!-- ============================================
          CONTENIDOS - Registro de contenidos publicitarios
          ============================================ -->

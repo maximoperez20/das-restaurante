@@ -19,6 +19,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import ar.edu.ubp.das.dto.request.ModificarReservaDto;
 
 @Endpoint
 public class ReservaEndpoint {
@@ -117,6 +118,47 @@ public class ReservaEndpoint {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("exitosa", false);
             errorResponse.put("mensaje", "Error al cancelar reserva: " + e.getMessage());
+            response.setJsonResponse(gson.toJson(errorResponse));
+        }
+        
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "modificarReservaRequest")
+    @ResponsePayload
+    public ModificarReservaResponse modificarReserva(@RequestPayload ModificarReservaRequest request) {
+        ModificarReservaResponse response = new ModificarReservaResponse();
+        try {
+            // Parsear JSON recibido
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
+            
+            logger.info("JSON recibido: {}", jsonData);
+            
+            // Construir DTO para modificar reserva
+            ModificarReservaDto modificarDto = new ModificarReservaDto(
+                (String) jsonData.get("codReserva"),
+                (String) jsonData.get("codZona"),
+                (String) jsonData.get("fechaReserva"),
+                (String) jsonData.get("horaDesde"),
+                jsonData.containsKey("cantAdultos") && jsonData.get("cantAdultos") != null
+                    ? ((Number) jsonData.get("cantAdultos")).intValue() : null,
+                jsonData.containsKey("cantMenores") && jsonData.get("cantMenores") != null
+                    ? ((Number) jsonData.get("cantMenores")).intValue() : null
+            );
+            
+            boolean modificada = reservaRepository.modificarReserva(modificarDto);
+            
+            // Construir respuesta JSON
+            Map<String, Object> jsonResponse = new HashMap<>();
+            jsonResponse.put("exitosa", modificada);
+            jsonResponse.put("mensaje", modificada ? "Reserva modificada exitosamente" : "Reserva no encontrada");
+            
+            response.setJsonResponse(gson.toJson(jsonResponse));
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("exitosa", false);
+            errorResponse.put("mensaje", "Error al modificar reserva: " + e.getMessage());
             response.setJsonResponse(gson.toJson(errorResponse));
         }
         
