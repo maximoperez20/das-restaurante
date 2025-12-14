@@ -230,5 +230,33 @@
         </xs:complexType>
     </xs:element>
 
+    <!-- ============================================
+         MENU - Obtener menú activo (PDF/imagen)
+         ============================================ -->
+    
+    <xs:element name="getMenuActivoRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonData" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getMenuActivoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nroMenu" type="xs:long" minOccurs="0"/>
+                <xs:element name="nombreArchivo" type="xs:string" minOccurs="0"/>
+                <xs:element name="tipoMime" type="xs:string" minOccurs="0"/>
+                <xs:element name="tamanoBytes" type="xs:long" minOccurs="0"/>
+                <xs:element name="hashSha256" type="xs:string" minOccurs="0"/>
+                <xs:element name="datosArchivoBase64" type="xs:string" minOccurs="0"/>
+                <xs:element name="fechaCreacion" type="xs:dateTime" minOccurs="0"/>
+                <xs:element name="exitoso" type="xs:boolean"/>
+                <xs:element name="mensaje" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>
 
