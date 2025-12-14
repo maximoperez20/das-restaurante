@@ -77,11 +77,11 @@ public class ReservaController {
         
         try {
             boolean cancelada = reservaRepository.cancelarReserva(codReserva);
-            response.put("exitosa", cancelada);
+            response.put("actualizados", cancelada ? 1 : 0);
             response.put("mensaje", cancelada ? "Reserva cancelada exitosamente" : "Reserva no encontrada");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("exitosa", false);
+            response.put("actualizados", 0);
             response.put("mensaje", "Error al cancelar reserva: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }

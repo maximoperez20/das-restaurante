@@ -105,13 +105,13 @@ public class ReservaEndpoint {
             
             // Construir respuesta JSON
             Map<String, Object> jsonResponse = new HashMap<>();
-            jsonResponse.put("exitosa", cancelada);
+            jsonResponse.put("actualizados", cancelada ? 1 : 0);
             jsonResponse.put("mensaje", cancelada ? "Reserva cancelada exitosamente" : "Reserva no encontrada");
             
             response.setJsonResponse(gson.toJson(jsonResponse));
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("exitosa", false);
+            errorResponse.put("actualizados", 0);
             errorResponse.put("mensaje", "Error al cancelar reserva: " + e.getMessage());
             response.setJsonResponse(gson.toJson(errorResponse));
         }
