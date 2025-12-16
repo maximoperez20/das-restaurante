@@ -1,6 +1,8 @@
 package ar.edu.ubp.das.controller;
 
 import ar.edu.ubp.das.repository.ReservaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/api/restaurantes/{nroRestaurante}/reservas")
 public class ReservaController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReservaController.class);
     private final ReservaRepository reservaRepository;
     
     public ReservaController(ReservaRepository reservaRepository) {
@@ -72,15 +75,35 @@ public class ReservaController {
     }
 
     @PostMapping("/{codReserva}/cancelar")
-    public ResponseEntity<Map<String, Object>> cancelarReserva(@PathVariable String codReserva) {
+    public ResponseEntity<Map<String, Object>> cancelarReserva(
+        @PathVariable String codReserva,
+        @RequestBody(required = false) Map<String, Object> requestBody) {
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
-            boolean cancelada = reservaRepository.cancelarReserva(codReserva);
+            logger.info("RequestBody recibido: {}", requestBody);
+            
+            String motivoCancelacion = null;
+            if (requestBody != null && requestBody.containsKey("motivoCancelacion")) {
+                Object motivoObj = requestBody.get("motivoCancelacion");
+                logger.info("motivoObj tipo: {}, valor: {}", 
+                    motivoObj != null ? motivoObj.getClass().getName() : "null", motivoObj);
+                
+                // Extraer solo el string, sin importar si viene como String o como objeto
+                if (motivoObj instanceof String) {
+                    motivoCancelacion = (String) motivoObj;
+                } else if (motivoObj != null) {
+                    motivoCancelacion = String.valueOf(motivoObj);
+                }
+            }
+            
+            logger.info("motivoCancelacion a guardar: '{}'", motivoCancelacion);
+            boolean cancelada = reservaRepository.cancelarReserva(codReserva, motivoCancelacion);
             response.put("actualizados", cancelada ? 1 : 0);
             response.put("mensaje", cancelada ? "Reserva cancelada exitosamente" : "Reserva no encontrada");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            logger.error("Error al cancelar reserva: ", e);
             response.put("actualizados", 0);
             response.put("mensaje", "Error al cancelar reserva: " + e.getMessage());
             return ResponseEntity.status(500).body(response);

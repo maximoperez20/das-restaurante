@@ -3,6 +3,10 @@ package ar.edu.ubp.das.repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Time;
@@ -53,14 +57,30 @@ public class ReservaRepository {
         }
     }
 
-    public boolean cancelarReserva(String codReserva) {
-        String sql = "UPDATE reservas_sucursales " +
-                     "SET cancelada = 1, fecha_hora_cancelacion = GETDATE() " +
-                     "WHERE cod_reserva = ?";
+    public boolean cancelarReserva(String codReserva, String motivoCancelacion) {
+        String sql = "EXEC dbo.sp_CancelarReservaRestaurante ?,?";
         
-        int rows = jdbcTemplate.update(sql, codReserva);
+        int rows = jdbcTemplate.update(sql, codReserva, motivoCancelacion);
         return rows > 0;
     }
+
+    // public boolean cancelarReserva(String codReserva, String motivoCancelacion) {
+    //     try {
+    //         MapSqlParameterSource params = new MapSqlParameterSource()
+    //                 .addValue("nro_reserva", codReserva)
+    //                 .addValue("motivo_cancelacion", motivoCancelacion);
+
+    //         new SimpleJdbcCall(jdbcTemplate)
+    //                 .withSchemaName("dbo")
+    //                 .withProcedureName("sp_CancelarReservaRestaurante")
+    //                 .execute(params);
+
+    //         return true; // si no hay excepción, consideramos que se ejecutó correctamente
+    //     } catch (DataAccessException e) {
+    //         // Podés loguear e.getMessage() si querés detalle
+    //         return false;
+    //     }
+    // }
 
     public String buscarOCrearCliente(String apellido, String nombre, String correo, String telefonos) {
         String sqlBuscar = "SELECT nro_cliente FROM clientes WHERE correo = ?";
