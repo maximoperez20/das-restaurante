@@ -213,6 +213,45 @@ CREATE TABLE zonas_turnos_sucursales (
 );
 GO
 
+CREATE TABLE sucursales_menus (
+    nro_restaurante VARCHAR(36) NOT NULL,
+    nro_sucursal    VARCHAR(36) NOT NULL,
+    nro_menu        VARCHAR(36) NOT NULL,
+    CONSTRAINT PK_sucursales_menus PRIMARY KEY (nro_restaurante, nro_sucursal, nro_menu),
+    CONSTRAINT FK_sm_sucursales
+        FOREIGN KEY (nro_restaurante, nro_sucursal)
+        REFERENCES sucursales (nro_restaurante, nro_sucursal)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+
+);
+GO
+
+CREATE TABLE menus (
+    nro_menu VARCHAR(36) NOT NULL,
+    nom_menu VARCHAR(120) NOT NULL,
+    CONSTRAINT PK_menus PRIMARY KEY (nro_menu),
+    CONSTRAINT UQ_menus_nombre UNIQUE (nom_menu)
+);
+GO
+
+CREATE TABLE platos (
+    nro_plato VARCHAR(36) NOT NULL,
+    nom_plato VARCHAR(120) NOT NULL,
+    CONSTRAINT PK_platos PRIMARY KEY (nro_plato),
+    CONSTRAINT UQ_platos_nombre UNIQUE (nom_plato)
+);
+GO
+
+CREATE TABLE platos_menus (
+    nro_menu VARCHAR(36) NOT NULL,
+    nro_plato VARCHAR(36) NOT NULL,
+    CONSTRAINT PK_platos_menus PRIMARY KEY (nro_menu, nro_plato),
+    CONSTRAINT FK_pm_menus
+        FOREIGN KEY (nro_menu)
+        REFERENCES menus (nro_menu)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+GO
 /* =========================================
    5) Contenidos por restaurante/sucursal
    ========================================= */

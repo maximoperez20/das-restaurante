@@ -536,3 +536,22 @@ BEGIN
   SELECT @@ROWCOUNT;
 END
 GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_ObtenerMenuPorSucursal
+  @nro_restaurante VARCHAR(36),
+  @nro_sucursal VARCHAR(36)
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  SELECT m.nro_menu AS nroMenu,
+         m.nom_menu AS nomMenu,
+         p.nro_plato AS nroPlato,
+         p.nom_plato AS nomPlato
+  FROM sucursales_menus sm
+  JOIN menus m ON m.nro_menu = sm.nro_menu
+  JOIN platos_menus pm ON pm.nro_menu = sm.nro_menu
+  JOIN platos p ON p.nro_plato = pm.nro_plato
+  WHERE sm.nro_restaurante = @nro_restaurante
+    AND sm.nro_sucursal = @nro_sucursal
+END

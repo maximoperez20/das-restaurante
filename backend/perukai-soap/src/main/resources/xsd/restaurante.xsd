@@ -166,7 +166,23 @@
         </xs:complexType>
     </xs:element>
 
-        <xs:element name="modificarReservaResponse">
+    <xs:element name="modificarReservaResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonResponse" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="menusPorSucursalRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonData" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="menusPorSucursalResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="jsonResponse" type="xs:string"/>

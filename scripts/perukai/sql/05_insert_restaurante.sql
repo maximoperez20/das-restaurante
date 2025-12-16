@@ -310,6 +310,226 @@ IF NOT EXISTS (SELECT 1 FROM estilos_sucursales WHERE nro_restaurante = @rest_uu
 
 PRINT 'Tipos de comida y estilos insertados para Sucursal 2';
 
+
+
+/* =========================================
+   11) Menus para Sucursal 1: Nueva Córdoba
+   ========================================= */
+
+-- Menu 1: Menu Principal
+DECLARE @nro_menu_1_uuid VARCHAR(36) = 'PERUKAI-MENU-0001-0001-0001-0001';
+IF NOT EXISTS (SELECT 1 FROM menus WHERE nro_menu = @nro_menu_1_uuid)
+BEGIN
+    INSERT INTO menus (nro_menu, nom_menu)
+    VALUES (@nro_menu_1_uuid, 'Menu Principal');
+    PRINT 'Menu Principal insertado';
+END
+ELSE
+BEGIN
+    PRINT 'Menu Principal ya existe';
+END
+
+-- Asociar Menu 1 a Sucursal 1
+IF NOT EXISTS (SELECT 1 FROM sucursales_menus WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND nro_menu = @nro_menu_1_uuid)
+BEGIN
+    INSERT INTO sucursales_menus (nro_restaurante, nro_sucursal, nro_menu)
+    VALUES (@rest_uuid, @suc_1_uuid, @nro_menu_1_uuid);
+    PRINT 'Menu Principal asociado a Sucursal 1';
+END
+
+-- Platos para Menu 1
+DECLARE @nro_plato_1_uuid VARCHAR(36) = 'PERUKAI-PLATO-0001-0001-0001-0001';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_1_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_1_uuid, 'Sushi Roll Clásico');
+    PRINT 'Plato 1 (Sushi Roll Clásico) insertado';
+END
+
+DECLARE @nro_plato_2_uuid VARCHAR(36) = 'PERUKAI-PLATO-0001-0001-0001-0002';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_2_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_2_uuid, 'Sashimi de Salmón');
+    PRINT 'Plato 2 (Sashimi de Salmón) insertado';
+END
+
+DECLARE @nro_plato_3_uuid VARCHAR(36) = 'PERUKAI-PLATO-0001-0001-0001-0003';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_3_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_3_uuid, 'Tempura de Camarones');
+    PRINT 'Plato 3 (Tempura de Camarones) insertado';
+END
+
+DECLARE @nro_plato_4_uuid VARCHAR(36) = 'PERUKAI-PLATO-0001-0001-0001-0004';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_4_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_4_uuid, 'Ramen de Cerdo');
+    PRINT 'Plato 4 (Ramen de Cerdo) insertado';
+END
+
+-- Asociar platos al Menu 1
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_1_uuid AND nro_plato = @nro_plato_1_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_1_uuid, @nro_plato_1_uuid);
+END
+
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_1_uuid AND nro_plato = @nro_plato_2_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_1_uuid, @nro_plato_2_uuid);
+END
+
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_1_uuid AND nro_plato = @nro_plato_3_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_1_uuid, @nro_plato_3_uuid);
+END
+
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_1_uuid AND nro_plato = @nro_plato_4_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_1_uuid, @nro_plato_4_uuid);
+END
+
+PRINT 'Platos asociados al Menu Principal';
+
+-- Menu 2: Menu de Degustación
+DECLARE @nro_menu_2_uuid VARCHAR(36) = 'PERUKAI-MENU-0001-0001-0001-0002';
+IF NOT EXISTS (SELECT 1 FROM menus WHERE nro_menu = @nro_menu_2_uuid)
+BEGIN
+    INSERT INTO menus (nro_menu, nom_menu)
+    VALUES (@nro_menu_2_uuid, 'Menu de Degustación');
+    PRINT 'Menu de Degustación insertado';
+END
+
+-- Asociar Menu 2 a Sucursal 1
+IF NOT EXISTS (SELECT 1 FROM sucursales_menus WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_1_uuid AND nro_menu = @nro_menu_2_uuid)
+BEGIN
+    INSERT INTO sucursales_menus (nro_restaurante, nro_sucursal, nro_menu)
+    VALUES (@rest_uuid, @suc_1_uuid, @nro_menu_2_uuid);
+    PRINT 'Menu de Degustación asociado a Sucursal 1';
+END
+
+-- Platos adicionales para Menu 2
+DECLARE @nro_plato_5_uuid VARCHAR(36) = 'PERUKAI-PLATO-0001-0001-0001-0005';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_5_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_5_uuid, 'Nigiri Variado');
+    PRINT 'Plato 5 (Nigiri Variado) insertado';
+END
+
+DECLARE @nro_plato_6_uuid VARCHAR(36) = 'PERUKAI-PLATO-0001-0001-0001-0006';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_6_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_6_uuid, 'Tataki de Atún');
+    PRINT 'Plato 6 (Tataki de Atún) insertado';
+END
+
+-- Asociar platos al Menu 2
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_2_uuid AND nro_plato = @nro_plato_5_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_2_uuid, @nro_plato_5_uuid);
+END
+
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_2_uuid AND nro_plato = @nro_plato_6_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_2_uuid, @nro_plato_6_uuid);
+END
+
+-- También agregar algunos platos del Menu 1 al Menu 2
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_2_uuid AND nro_plato = @nro_plato_2_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_2_uuid, @nro_plato_2_uuid);
+END
+
+PRINT 'Platos asociados al Menu de Degustación';
+
+/* =========================================
+   12) Menus para Sucursal 2: Güemes
+   ========================================= */
+
+-- Menu 3: Menu Terraza (específico para Sucursal 2)
+DECLARE @nro_menu_3_uuid VARCHAR(36) = 'PERUKAI-MENU-0002-0002-0002-0001';
+IF NOT EXISTS (SELECT 1 FROM menus WHERE nro_menu = @nro_menu_3_uuid)
+BEGIN
+    INSERT INTO menus (nro_menu, nom_menu)
+    VALUES (@nro_menu_3_uuid, 'Menu Terraza');
+    PRINT 'Menu Terraza insertado';
+END
+
+-- Asociar Menu 3 a Sucursal 2
+IF NOT EXISTS (SELECT 1 FROM sucursales_menus WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_2_uuid AND nro_menu = @nro_menu_3_uuid)
+BEGIN
+    INSERT INTO sucursales_menus (nro_restaurante, nro_sucursal, nro_menu)
+    VALUES (@rest_uuid, @suc_2_uuid, @nro_menu_3_uuid);
+    PRINT 'Menu Terraza asociado a Sucursal 2';
+END
+
+-- Platos para Menu 3
+DECLARE @nro_plato_7_uuid VARCHAR(36) = 'PERUKAI-PLATO-0002-0002-0002-0001';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_7_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_7_uuid, 'Ceviche de Pescado');
+    PRINT 'Plato 7 (Ceviche de Pescado) insertado';
+END
+
+DECLARE @nro_plato_8_uuid VARCHAR(36) = 'PERUKAI-PLATO-0002-0002-0002-0002';
+IF NOT EXISTS (SELECT 1 FROM platos WHERE nro_plato = @nro_plato_8_uuid)
+BEGIN
+    INSERT INTO platos (nro_plato, nom_plato)
+    VALUES (@nro_plato_8_uuid, 'Ensalada de Algas');
+    PRINT 'Plato 8 (Ensalada de Algas) insertado';
+END
+
+-- Asociar platos al Menu 3
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_3_uuid AND nro_plato = @nro_plato_7_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_3_uuid, @nro_plato_7_uuid);
+END
+
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_3_uuid AND nro_plato = @nro_plato_8_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_3_uuid, @nro_plato_8_uuid);
+END
+
+-- También asociar algunos platos del Menu 1 al Menu 3
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_3_uuid AND nro_plato = @nro_plato_1_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_3_uuid, @nro_plato_1_uuid);
+END
+
+IF NOT EXISTS (SELECT 1 FROM platos_menus WHERE nro_menu = @nro_menu_3_uuid AND nro_plato = @nro_plato_3_uuid)
+BEGIN
+    INSERT INTO platos_menus (nro_menu, nro_plato)
+    VALUES (@nro_menu_3_uuid, @nro_plato_3_uuid);
+END
+
+PRINT 'Platos asociados al Menu Terraza';
+
+-- Menu 4: Menu Principal (compartido con Sucursal 1)
+-- Asociar Menu 1 también a Sucursal 2
+IF NOT EXISTS (SELECT 1 FROM sucursales_menus WHERE nro_restaurante = @rest_uuid AND nro_sucursal = @suc_2_uuid AND nro_menu = @nro_menu_1_uuid)
+BEGIN
+    INSERT INTO sucursales_menus (nro_restaurante, nro_sucursal, nro_menu)
+    VALUES (@rest_uuid, @suc_2_uuid, @nro_menu_1_uuid);
+    PRINT 'Menu Principal también asociado a Sucursal 2';
+END
+
+PRINT 'Menus y platos insertados exitosamente';
+
 /* =========================================
    Resumen
    ========================================= */
@@ -323,6 +543,8 @@ PRINT 'Sucursales: 2 (Nueva Córdoba, Güemes)';
 PRINT 'Zonas: 4 (2 por sucursal)';
 PRINT 'Turnos: 7 (4 en Sucursal 1, 3 en Sucursal 2)';
 PRINT 'Zonas por turno: 14';
+PRINT 'Menus: 3 (Menu Principal, Menu de Degustación, Menu Terraza)';
+PRINT 'Platos: 8';
 PRINT '========================================';
 GO
 
