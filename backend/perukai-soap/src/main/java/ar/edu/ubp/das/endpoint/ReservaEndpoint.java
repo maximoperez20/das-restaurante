@@ -71,7 +71,9 @@ public class ReservaEndpoint {
                 horaDesde,
                 ((Number) jsonData.get("cantAdultos")).intValue(),
                 jsonData.containsKey("cantMenores") && jsonData.get("cantMenores") != null
-                    ? ((Number) jsonData.get("cantMenores")).intValue() : 0
+                    ? ((Number) jsonData.get("cantMenores")).intValue() : 0,
+                jsonData.containsKey("observaciones") && jsonData.get("observaciones") != null
+                    ? (String) jsonData.get("observaciones") : null
             );
             
             // Construir respuesta JSON

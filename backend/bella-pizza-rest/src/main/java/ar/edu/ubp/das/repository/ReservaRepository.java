@@ -33,9 +33,10 @@ public class ReservaRepository {
             LocalDate fechaReserva,
             Time horaDesde,
             int cantAdultos,
-            int cantMenores) {
+            int cantMenores,
+            String observaciones) {
         
-        String sql = "EXEC dbo.sp_registrar_reserva ?, ?, ?, ?, ?, ?, ?, ?";
+        String sql = "EXEC dbo.sp_registrar_reserva ?, ?, ?, ?, ?, ?, ?, ?, ?";
         
         try {
             Map<String, Object> result = jdbcTemplate.queryForMap(sql, 
@@ -46,7 +47,8 @@ public class ReservaRepository {
                 java.sql.Date.valueOf(fechaReserva), 
                 horaDesde, 
                 cantAdultos, 
-                cantMenores
+                cantMenores,
+                observaciones
             );
             
             return (String) result.get("cod_reserva");

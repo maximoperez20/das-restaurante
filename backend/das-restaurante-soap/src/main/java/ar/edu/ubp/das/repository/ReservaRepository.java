@@ -22,14 +22,15 @@ public class ReservaRepository {
             LocalDate fechaReserva,
             Time horaDesde,
             int cantAdultos,
-            int cantMenores) {
+            int cantMenores,
+            String observaciones) {
         
         String codReserva = UUID.randomUUID().toString();
         
         String sql = "INSERT INTO reservas_sucursales (" +
                      "cod_reserva, nro_cliente, fecha_reserva, nro_restaurante, nro_sucursal, " +
-                     "cod_zona, hora_desde, cant_adultos, cant_menores, cancelada, fecha_hora_registro) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, GETDATE())";
+                     "cod_zona, hora_desde, cant_adultos, cant_menores, observaciones, cancelada, fecha_hora_registro) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, GETDATE())";
         
         jdbcTemplate.update(sql, 
             codReserva, 
@@ -40,7 +41,8 @@ public class ReservaRepository {
             codZona, 
             horaDesde, 
             cantAdultos, 
-            cantMenores
+            cantMenores,
+            observaciones
         );
         
         return codReserva;
