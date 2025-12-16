@@ -72,11 +72,27 @@ public class ReservaController {
     }
 
     @PostMapping("/{codReserva}/cancelar")
-    public ResponseEntity<Map<String, Object>> cancelarReserva(@PathVariable String codReserva) {
+    public ResponseEntity<Map<String, Object>> cancelarReserva(
+        @PathVariable String codReserva,
+        @RequestBody(required = false) Map<String, Object> requestBody) {
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
-            boolean cancelada = reservaRepository.cancelarReserva(codReserva);
+            
+            String motivoCancelacion = null;
+            if (requestBody != null && requestBody.containsKey("motivoCancelacion")) {
+                Object motivoObj = requestBody.get("motivoCancelacion");
+                
+                // Extraer solo el string, sin importar si viene como String o como objeto
+                if (motivoObj instanceof String) {
+                    motivoCancelacion = (String) motivoObj;
+                } else if (motivoObj != null) {
+                    motivoCancelacion = String.valueOf(motivoObj);
+                }
+            }
+            
+
+            boolean cancelada = reservaRepository.cancelarReserva(codReserva, motivoCancelacion);
             response.put("actualizados", cancelada ? 1 : 0);
             response.put("mensaje", cancelada ? "Reserva cancelada exitosamente" : "Reserva no encontrada");
             return ResponseEntity.ok(response);

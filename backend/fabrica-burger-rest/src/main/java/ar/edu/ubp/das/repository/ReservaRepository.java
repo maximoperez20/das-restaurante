@@ -53,12 +53,10 @@ public class ReservaRepository {
         }
     }
 
-    public boolean cancelarReserva(String codReserva) {
-        String sql = "UPDATE reservas_sucursales " +
-                     "SET cancelada = 1, fecha_hora_cancelacion = GETDATE() " +
-                     "WHERE cod_reserva = ?";
+    public boolean cancelarReserva(String codReserva, String motivoCancelacion) {
+        String sql = "EXEC dbo.sp_CancelarReservaRestaurante ?,?";
         
-        int rows = jdbcTemplate.update(sql, codReserva);
+        int rows = jdbcTemplate.update(sql, codReserva, motivoCancelacion);
         return rows > 0;
     }
 

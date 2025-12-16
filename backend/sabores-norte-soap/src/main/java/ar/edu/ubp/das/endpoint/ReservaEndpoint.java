@@ -94,14 +94,14 @@ public class ReservaEndpoint {
     @ResponsePayload
     public CancelarReservaResponse cancelarReserva(@RequestPayload CancelarReservaRequest request) {
         CancelarReservaResponse response = new CancelarReservaResponse();
-        
         try {
             // Parsear JSON recibido
             Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
             Map<String, Object> jsonData = gson.fromJson(request.getJsonData(), mapType);
             
-            String codReserva = (String) jsonData.get("codReserva");
-            boolean cancelada = reservaRepository.cancelarReserva(codReserva);
+            String codReserva = (String) jsonData.get("nroReserva");
+            String motivoCancelacion = (String) jsonData.get("motivoCancelacion");
+            boolean cancelada = reservaRepository.cancelarReserva(codReserva, motivoCancelacion);
             
             // Construir respuesta JSON
             Map<String, Object> jsonResponse = new HashMap<>();
