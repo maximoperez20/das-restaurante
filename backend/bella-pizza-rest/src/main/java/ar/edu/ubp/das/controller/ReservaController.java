@@ -55,7 +55,8 @@ public class ReservaController {
                 horaDesde,
                 ((Number) requestBody.get("cantAdultos")).intValue(),
                 requestBody.containsKey("cantMenores") && requestBody.get("cantMenores") != null
-                    ? ((Number) requestBody.get("cantMenores")).intValue() : 0
+                    ? ((Number) requestBody.get("cantMenores")).intValue() : 0,
+                (String) requestBody.get("observacionesReserva")
             );
             
             response.put("codReserva", codReserva);

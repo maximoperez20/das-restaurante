@@ -48,7 +48,7 @@ public class ReservaEndpoint {
                 (String) datosCliente.get("nombre"),
                 (String) datosCliente.get("correo"),
                 datosCliente.containsKey("telefonos") && datosCliente.get("telefonos") != null 
-                    ? (String) datosCliente.get("telefonos") : null
+                    ? (String) datosCliente.get("telefonos") : null            
             );
             
             // Parsear fecha y hora
@@ -68,7 +68,8 @@ public class ReservaEndpoint {
                 horaDesde,
                 ((Number) jsonData.get("cantAdultos")).intValue(),
                 jsonData.containsKey("cantMenores") && jsonData.get("cantMenores") != null
-                    ? ((Number) jsonData.get("cantMenores")).intValue() : 0
+                    ? ((Number) jsonData.get("cantMenores")).intValue() : 0,
+                    (String) jsonData.get("observacionesReserva")
             );
             
             // Construir respuesta JSON
