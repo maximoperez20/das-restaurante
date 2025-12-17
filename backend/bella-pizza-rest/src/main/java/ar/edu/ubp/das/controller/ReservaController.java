@@ -56,9 +56,9 @@ public class ReservaController {
                 horaDesde,
                 ((Number) requestBody.get("cantAdultos")).intValue(),
                 requestBody.containsKey("cantMenores") && requestBody.get("cantMenores") != null
-                    ? ((Number) requestBody.get("cantMenores")).intValue() : 0,
-                (String) requestBody.get("observacionesReserva"),
-                new BigDecimal((String) requestBody.get("costoReserva"))      
+                    ? ((Number) requestBody.get("cantMenores")).intValue() : 0,                
+                new BigDecimal((String) requestBody.get("costoReserva")),
+                (String) requestBody.get("observacionesReserva") //nuevo campo para mandar observaciones de la reserva.      
             );
             
             response.put("codReserva", codReserva);

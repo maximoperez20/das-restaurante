@@ -30,9 +30,9 @@ public class ReservaRepository {
             LocalDate fechaReserva,
             Time horaDesde,
             int cantAdultos,
-            int cantMenores,
-            String notas,
-            BigDecimal costoReserva) {
+            int cantMenores,            
+            BigDecimal costoReserva,
+            String notas) {
         
         String sql = "EXEC dbo.sp_registrar_reserva ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
         
@@ -45,9 +45,9 @@ public class ReservaRepository {
                 java.sql.Date.valueOf(fechaReserva), 
                 horaDesde, 
                 cantAdultos, 
-                cantMenores,
-                notas,
-                costoReserva
+                cantMenores,                
+                costoReserva,
+                notas
             );
             
             return (String) result.get("cod_reserva");

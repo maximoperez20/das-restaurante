@@ -1,9 +1,8 @@
-/* AGREGAMOS EL CAMPO EN reservas_sucursales */
+/* AGREGAMOS EL CAMPO reservas_sucursales */
 
 alter table reservas_sucursales
     add notas NVARCHAR(400) NULL;
 go
-
 CREATE OR ALTER PROCEDURE dbo.sp_registrar_reserva
   @nro_cliente VARCHAR(36),
   @nro_restaurante VARCHAR(36),
@@ -13,7 +12,8 @@ CREATE OR ALTER PROCEDURE dbo.sp_registrar_reserva
   @hora_desde TIME,
   @cant_adultos INT,
   @cant_menores INT,
-  @notas NVARCHAR(400) = NULL
+  @costo_reserva DECIMAL(10,2) = NULL,
+  @notas NVARCHAR(400) = NULL 
 AS
 BEGIN
   SET NOCOUNT ON;
@@ -103,11 +103,11 @@ BEGIN
     
     INSERT INTO reservas_sucursales (
       cod_reserva, nro_cliente, fecha_reserva, nro_restaurante, nro_sucursal,
-      cod_zona, hora_desde, cant_adultos, cant_menores, cancelada, fecha_hora_registro, notas
+      cod_zona, hora_desde, cant_adultos, cant_menores, cancelada, fecha_hora_registro, notas, costo_reserva
     )
     VALUES (
       @cod_reserva, @nro_cliente, @fecha_reserva, @nro_restaurante, @nro_sucursal,
-      @cod_zona, @hora_desde, @cant_adultos, @cant_menores, 0, GETDATE(), @notas
+      @cod_zona, @hora_desde, @cant_adultos, @cant_menores, 0, GETDATE(), @notas, @costo_reserva
     );
     
     COMMIT TRANSACTION;
@@ -120,9 +120,3 @@ BEGIN
     THROW;
   END CATCH
 END
-
-
-
-
-
-
