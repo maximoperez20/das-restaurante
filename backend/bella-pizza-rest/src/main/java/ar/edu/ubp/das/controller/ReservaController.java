@@ -58,7 +58,7 @@ public class ReservaController {
                 requestBody.containsKey("cantMenores") && requestBody.get("cantMenores") != null
                     ? ((Number) requestBody.get("cantMenores")).intValue() : 0,
                 (String) requestBody.get("observacionesReserva"),
-                new BigDecimal((String) requestBody.get("costoReserva"))  // ✅ Funciona       
+                new BigDecimal((String) requestBody.get("costoReserva"))      
             );
             
             response.put("codReserva", codReserva);

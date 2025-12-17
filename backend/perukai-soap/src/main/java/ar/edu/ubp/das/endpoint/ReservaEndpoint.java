@@ -11,6 +11,7 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -69,7 +70,8 @@ public class ReservaEndpoint {
                 ((Number) jsonData.get("cantAdultos")).intValue(),
                 jsonData.containsKey("cantMenores") && jsonData.get("cantMenores") != null
                     ? ((Number) jsonData.get("cantMenores")).intValue() : 0,
-                    (String) jsonData.get("observacionesReserva")
+                    (String) jsonData.get("observacionesReserva"),
+                 new BigDecimal((String) jsonData.get("costoReserva"))    
             );
             
             // Construir respuesta JSON
