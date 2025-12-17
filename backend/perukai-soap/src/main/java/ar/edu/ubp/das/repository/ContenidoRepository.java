@@ -65,6 +65,7 @@ public class ContenidoRepository {
                     contenido.put("publicado", rs.getBoolean("publicado"));
                     // Las imágenes se manejan con URL, así que retornamos null
                     contenido.put("imagenAPublicar", null);
+                    contenido.put("propositoCorto", rs.getString("proposito_corto"));
                     return contenido;
                 },
                 nroRestaurante,
