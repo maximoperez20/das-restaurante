@@ -5,6 +5,7 @@ import ar.edu.ubp.das.repository.ReservaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -56,7 +57,8 @@ public class ReservaController {
                 ((Number) requestBody.get("cantAdultos")).intValue(),
                 requestBody.containsKey("cantMenores") && requestBody.get("cantMenores") != null
                     ? ((Number) requestBody.get("cantMenores")).intValue() : 0,
-                (String) requestBody.get("observacionesReserva")
+                (String) requestBody.get("observacionesReserva"),
+                new BigDecimal((String) requestBody.get("costoReserva"))  // ✅ Funciona       
             );
             
             response.put("codReserva", codReserva);

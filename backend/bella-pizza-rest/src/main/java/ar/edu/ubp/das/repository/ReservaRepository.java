@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Map;
@@ -30,9 +31,10 @@ public class ReservaRepository {
             Time horaDesde,
             int cantAdultos,
             int cantMenores,
-            String notas) {
+            String notas,
+            BigDecimal costoReserva) {
         
-        String sql = "EXEC dbo.sp_registrar_reserva ?, ?, ?, ?, ?, ?, ?, ?, ?";
+        String sql = "EXEC dbo.sp_registrar_reserva ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
         
         try {
             Map<String, Object> result = jdbcTemplate.queryForMap(sql, 
@@ -44,7 +46,8 @@ public class ReservaRepository {
                 horaDesde, 
                 cantAdultos, 
                 cantMenores,
-                notas
+                notas,
+                costoReserva
             );
             
             return (String) result.get("cod_reserva");
