@@ -499,3 +499,18 @@ GO
 PRINT 'Stored procedures creados/actualizados exitosamente en das_bella_pizza';
 GO
 
+
+CREATE OR ALTER PROCEDURE dbo.sp_cancelar_reserva
+  @nro_reserva VARCHAR(36),
+  @razon_cancelacion VARCHAR(255)
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  UPDATE reservas_sucursales
+  SET cancelada = 1, fecha_hora_cancelacion = GETDATE(), notas = @razon_cancelacion
+  WHERE cod_reserva = @nro_reserva;
+
+  SELECT @@ROWCOUNT;
+END
+GO

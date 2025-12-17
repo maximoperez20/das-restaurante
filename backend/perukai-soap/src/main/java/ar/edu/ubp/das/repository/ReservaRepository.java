@@ -61,9 +61,9 @@ public class ReservaRepository {
         }
     }
 
-    public boolean cancelarReserva(String codReserva) {
-        String sql = "EXEC dbo.sp_cancelar_reserva ?";
-        int rows = jdbcTemplate.update(sql, codReserva);
+    public boolean cancelarReserva(String codReserva, String razonCancelacion) {
+        String sql = "EXEC dbo.sp_cancelar_reserva ?, ?";
+        int rows = jdbcTemplate.update(sql, codReserva, razonCancelacion);
         return rows > 0;
     }
 

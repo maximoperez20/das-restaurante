@@ -53,13 +53,21 @@ public class ReservaRepository {
         }
     }
 
-    public boolean cancelarReserva(String codReserva) {
-        String sql = "UPDATE reservas_sucursales " +
-                     "SET cancelada = 1, fecha_hora_cancelacion = GETDATE() " +
-                     "WHERE cod_reserva = ?";
+    public boolean cancelarReserva(String codReserva, String razonCancelacion) {
+        System.out.println("ReservaRepository.cancelarReserva - Iniciando cancelación");
+        System.out.println("ReservaRepository.cancelarReserva - codReserva: " + codReserva);
+        System.out.println("ReservaRepository.cancelarReserva - razonCancelacion: " + razonCancelacion);
         
-        int rows = jdbcTemplate.update(sql, codReserva);
-        return rows > 0;
+        try {
+            String sql = "EXEC dbo.sp_cancelar_reserva ?, ?";
+            Integer rows = jdbcTemplate.queryForObject(sql, Integer.class, codReserva, razonCancelacion);
+            System.out.println("ReservaRepository.cancelarReserva - Filas afectadas: " + rows);
+            return rows != null && rows > 0;
+        } catch (DataAccessException e) {
+            System.err.println("ReservaRepository.cancelarReserva - Error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error al cancelar reserva: " + e.getMessage(), e);
+        }
     }
 
     public String buscarOCrearCliente(String apellido, String nombre, String correo, String telefonos) {

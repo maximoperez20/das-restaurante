@@ -1,7 +1,6 @@
 package ar.edu.ubp.das.controller;
 
 import ar.edu.ubp.das.repository.ReservaRepository;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,19 +71,35 @@ public class ReservaController {
     }
 
     @PostMapping("/{codReserva}/cancelar")
-    public ResponseEntity<Map<String, Object>> cancelarReserva(@PathVariable String codReserva) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> cancelarReserva(
+            @PathVariable String nroRestaurante,
+            @PathVariable String codReserva, 
+            @RequestBody(required = false) Map<String, Object> requestBody) {
         
+        Map<String, Object> response = new HashMap<>();
+
+        String razonCancelacion = null;
+        if (requestBody != null && requestBody.containsKey("razonCancelacion")) {
+            razonCancelacion = (String) requestBody.get("razonCancelacion");
+        }
+        
+        if (razonCancelacion == null || razonCancelacion.trim().isEmpty()) {
+            razonCancelacion = "Sin razón especificada";
+        }
+        
+
         try {
-            boolean cancelada = reservaRepository.cancelarReserva(codReserva);
+            boolean cancelada = reservaRepository.cancelarReserva(codReserva, razonCancelacion.trim());
+            
             response.put("exitosa", cancelada);
             response.put("mensaje", cancelada ? "Reserva cancelada exitosamente" : "Reserva no encontrada");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.err.println("ReservaController.cancelarReserva - Error: " + e.getMessage());
+            e.printStackTrace();
             response.put("exitosa", false);
             response.put("mensaje", "Error al cancelar reserva: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
 }
-

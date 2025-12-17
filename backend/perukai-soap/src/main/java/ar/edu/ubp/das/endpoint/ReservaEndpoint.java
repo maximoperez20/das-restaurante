@@ -106,7 +106,8 @@ public class ReservaEndpoint {
             
             logger.info("JSON recibido: {}", jsonData);
             String codReserva = (String) jsonData.get("codReserva");
-            boolean cancelada = reservaRepository.cancelarReserva(codReserva);
+            String razonCancelacion = (String) jsonData.get("razonCancelacion");
+            boolean cancelada = reservaRepository.cancelarReserva(codReserva, razonCancelacion);
             
             // Construir respuesta JSON
             Map<String, Object> jsonResponse = new HashMap<>();
