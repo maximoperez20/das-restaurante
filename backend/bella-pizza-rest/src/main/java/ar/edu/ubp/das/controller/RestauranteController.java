@@ -46,5 +46,20 @@ public class RestauranteController {
         List<ZonaDto> zonas = zonaRepository.findBySucursal(nroRestaurante, nroSucursal);
         return ResponseEntity.ok(zonas);
     }
+
+    @GetMapping("/{nroRestaurante}/sucursales/{nroSucursal}/info")
+    public ResponseEntity<SucursalDto> getSucursalZonaInfo(
+            @PathVariable String nroRestaurante,
+            @PathVariable String nroSucursal) {
+        List<SucursalDto> sucursales = sucursalRepository.findByRestaurante(nroRestaurante);
+        SucursalDto sucursal = sucursales.stream()
+                .filter(s -> s.getNroSucursal().equals(nroSucursal))
+                .findFirst()
+                .orElse(null);
+        if (sucursal == null) {
+            return ResponseEntity.notFound().build();
+        }        
+        return ResponseEntity.ok(sucursal);
+    }
 }
 

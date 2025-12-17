@@ -131,4 +131,39 @@ public class RestauranteEndpoint {
         
         return response;
     }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "obtenerInfoSucursalRequest")
+    @ResponsePayload
+    public ObtenerInfoSucursalResponse obtenerInfoSucursal(@RequestPayload ar.edu.ubp.das.soap.gen.ObtenerInfoSucursalRequest request) {
+        ObtenerInfoSucursalResponse response = new ObtenerInfoSucursalResponse();
+        
+        try {
+            
+            GetSucursalesRequest requestDto = jsonParser.parseToObject(
+                request.getJsonData(), 
+                GetSucursalesRequest.class
+            );
+            String nroSucursal = requestDto.getNroSucursal();
+            List<SucursalDto> sucursales = sucursalRepository.findByRestaurante(requestDto.getNroRestaurante());
+            SucursalDto sucursal = sucursales.stream()
+                    .filter(s -> s.getNroSucursal().equals(nroSucursal))
+                    .findFirst()
+                    .orElse(null);
+            
+            if (sucursal == null) {
+                response.setJsonData(responseBuilder.buildErrorResponse(
+                        "Sucursal no encontrada"
+                ));
+            } else {
+                response.setJsonData(responseBuilder.buildSuccessResponse(sucursal));
+            }
+            
+        } catch (Exception e) {
+            response.setJsonData(responseBuilder.buildErrorResponse(
+                    "Error al obtener info de sucursal: " + e.getMessage()
+            ));
+        }
+        
+        return response;
+    }
 }

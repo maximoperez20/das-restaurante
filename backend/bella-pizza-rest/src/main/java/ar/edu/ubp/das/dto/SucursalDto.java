@@ -14,6 +14,7 @@ public class SucursalDto {
     private String categoriaPrecio;
     private String nomLocalidad;
     private String nomProvincia;
+    private Boolean permiteTakeout;
 
     public String getNroRestaurante() {
         return nroRestaurante;
@@ -117,6 +118,12 @@ public class SucursalDto {
 
     public void setNomProvincia(String nomProvincia) {
         this.nomProvincia = nomProvincia;
+    }
+    public Boolean getPermiteTakeout() {
+        return permiteTakeout;
+    }
+    public void setPermiteTakeout(Boolean permiteTakeout) {
+        this.permiteTakeout = permiteTakeout;
     }
 }
 

@@ -32,6 +32,25 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:element name="obtenerInfoSucursalRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonData" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="obtenerInfoSucursalResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jsonData" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    
+
+
     <!-- ============================================
          SUCURSALES - Consulta de sucursales
          ============================================ -->

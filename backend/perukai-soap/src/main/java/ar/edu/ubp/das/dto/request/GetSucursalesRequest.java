@@ -20,4 +20,14 @@ public class GetSucursalesRequest {
     public void setNroRestaurante(String nroRestaurante) {
         this.nroRestaurante = nroRestaurante;
     }
+
+    private String nroSucursal;
+
+    public String getNroSucursal() {
+        return nroSucursal;
+    }
+
+    public void setNroSucursal(String nroSucursal) {
+        this.nroSucursal = nroSucursal;
+    }
 }
